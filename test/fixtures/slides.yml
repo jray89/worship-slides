@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  service: one
+  position: 1
+  slide_type: MyString
+  psalm_number: 1
+  verse_start: 1
+  verse_end: 1
+  psalm_version: MyString
+  scripture_reference: MyString
+  content_data: 
+
+two:
+  service: two
+  position: 1
+  slide_type: MyString
+  psalm_number: 1
+  verse_start: 1
+  verse_end: 1
+  psalm_version: MyString
+  scripture_reference: MyString
+  content_data: 
