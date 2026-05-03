@@ -4,6 +4,7 @@ import WelcomeSlide from './slides/WelcomeSlide';
 import ClosingSlide from './slides/ClosingSlide';
 import PsalmSlide from './slides/PsalmSlide';
 import KeyVerseSlide from './slides/KeyVerseSlide';
+import ScriptureSlide from './slides/ScriptureSlide';
 
 interface RenderedPage {
   slide_type: string;
@@ -40,80 +41,6 @@ function groupPages(pages: RenderedPage[]): SlideGroup[] {
     }
   }
   return groups;
-}
-
-function ScripturePrintBlock({
-  reference,
-  text,
-}: {
-  reference: string;
-  text: string;
-}) {
-  return (
-    <table
-      style={{
-        width: '1920px',
-        borderCollapse: 'collapse',
-        fontFamily: '"Times New Roman", serif',
-      }}
-    >
-      <thead>
-        <tr>
-          <th
-            style={{
-              fontWeight: 'normal',
-              padding: 0,
-              textAlign: 'left',
-              backgroundColor: '#000',
-            }}
-          >
-            <div style={{ position: 'relative', padding: '30px 60px 10px' }}>
-              <img
-                src='/images/logo-white.png'
-                alt='RPC'
-                style={{
-                  position: 'absolute',
-                  top: '15px',
-                  right: '20px',
-                  width: '80px',
-                  height: '80px',
-                  objectFit: 'contain',
-                }}
-              />
-              <h1
-                style={{
-                  color: '#fff',
-                  textAlign: 'center',
-                  fontSize: '48px',
-                  fontWeight: 'normal',
-                  margin: 0,
-                  paddingRight: '100px',
-                }}
-              >
-                {reference}
-              </h1>
-            </div>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td
-            style={{
-              backgroundColor: '#000',
-              color: '#fff',
-              padding: '10px 60px 40px',
-              fontSize: '28px',
-              lineHeight: '1.7',
-              verticalAlign: 'top',
-            }}
-          >
-            {text}
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  );
 }
 
 function renderOtherPage(p: RenderedPage) {
@@ -163,7 +90,7 @@ export default function PrintSlidesView() {
         html, body {
           margin: 0;
           padding: 0;
-          background: #000;
+          background: #0e0e0e;
         }
         * {
           -webkit-print-color-adjust: exact;
@@ -182,9 +109,10 @@ export default function PrintSlidesView() {
           if (group.type === 'scripture') {
             return (
               <div key={i} style={breakStyle}>
-                <ScripturePrintBlock
+                <ScriptureSlide
                   reference={group.reference}
                   text={group.text}
+                  flowing
                 />
               </div>
             );
