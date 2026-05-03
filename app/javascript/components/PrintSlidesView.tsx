@@ -157,7 +157,7 @@ export default function PrintSlidesView() {
     <>
       <style>{`
         @page {
-          size: 16in 9in;
+          size: 1920px 1080px;
           margin: 0;
         }
         html, body {
@@ -165,19 +165,9 @@ export default function PrintSlidesView() {
           padding: 0;
           background: #000;
         }
-        /* Force background colors to print */
         * {
           -webkit-print-color-adjust: exact;
           print-color-adjust: exact;
-        }
-        /*
-         * Scale 1920px-wide slides to fit 16in page.
-         * 16in × 96dpi = 1536px → zoom = 1536/1920 = 0.8
-         */
-        @media print {
-          .slide-print-scale {
-            zoom: 0.8;
-          }
         }
       `}</style>
 
@@ -191,7 +181,7 @@ export default function PrintSlidesView() {
 
           if (group.type === 'scripture') {
             return (
-              <div key={i} className='slide-print-scale' style={breakStyle}>
+              <div key={i} style={breakStyle}>
                 <ScripturePrintBlock
                   reference={group.reference}
                   text={group.text}
@@ -203,7 +193,6 @@ export default function PrintSlidesView() {
           return (
             <div
               key={i}
-              className='slide-print-scale'
               style={{
                 width: '1920px',
                 height: '1080px',

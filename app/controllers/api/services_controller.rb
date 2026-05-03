@@ -41,8 +41,9 @@ module Api
     def export_pdf
       url = "#{request.base_url}/print/#{service.id}/slides"
       pdf = Grover.new(url,
-        viewport: { width: 1456, height: 816 },
-        prefer_css_page_size: true,
+        viewport: { width: 1920, height: 1080 },
+        width: "1920px",
+        height: "1080px",
         print_background: true,
         wait_until: "domcontentloaded",
         wait_for_selector: "#print-ready"

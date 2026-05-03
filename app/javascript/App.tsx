@@ -80,20 +80,16 @@ export default function App() {
               Preview
             </button>
             <a
-              href={`/print/${currentService.id}/slides`}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={`/api/services/${currentService.id}/export_pdf`}
               className="px-4 py-2 bg-blue-600 text-white rounded text-sm no-underline"
             >
-              Print Slides
+              Export PDF
             </a>
             <a
-              href={`/print/${currentService.id}/title_card`}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={`/api/services/${currentService.id}/export_title_card`}
               className="px-4 py-2 bg-blue-600 text-white rounded text-sm no-underline"
             >
-              Print Title Card
+              Export Title Card
             </a>
           </nav>
         )}
