@@ -3,6 +3,10 @@ import ServiceForm from './components/ServiceForm'
 import SlideEditor from './components/SlideEditor'
 import SlideCarousel from './components/SlideCarousel'
 import TitleCardPreview from './components/TitleCardPreview'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Separator } from '@/components/ui/separator'
 
 interface Service {
   id: number
@@ -58,7 +62,7 @@ export default function App() {
 
   return (
     <div className="max-w-6xl mx-auto p-5">
-      <header className="flex justify-between items-center py-4 border-b-2 border-gray-200 mb-6">
+      <header className="flex justify-between items-center py-4 mb-6">
         <h1
           className="text-2xl font-bold cursor-pointer"
           onClick={() => { setCurrentService(null); setView('list') }}
@@ -67,53 +71,56 @@ export default function App() {
         </h1>
         {currentService && (
           <nav className="flex gap-3 items-center">
-            <button
-              className={`px-4 py-2 border rounded text-sm ${view === 'edit' ? 'bg-gray-800 text-white border-gray-800' : 'bg-white text-gray-700 border-gray-300'}`}
+            <Button
+              variant={view === 'edit' ? 'default' : 'outline'}
+              size="sm"
               onClick={() => setView('edit')}
             >
               Edit Slides
-            </button>
-            <button
-              className={`px-4 py-2 border rounded text-sm ${view === 'preview' ? 'bg-gray-800 text-white border-gray-800' : 'bg-white text-gray-700 border-gray-300'}`}
+            </Button>
+            <Button
+              variant={view === 'preview' ? 'default' : 'outline'}
+              size="sm"
               onClick={handlePreview}
             >
               Preview
-            </button>
-            <a
-              href={`/api/services/${currentService.id}/export_pdf`}
-              className="px-4 py-2 bg-blue-600 text-white rounded text-sm no-underline"
-            >
+            </Button>
+            <Button size="sm" render={<a href={`/api/services/${currentService.id}/export_pdf`} />}>
               Export PDF
-            </a>
-            <a
-              href={`/api/services/${currentService.id}/export_title_card`}
-              className="px-4 py-2 bg-blue-600 text-white rounded text-sm no-underline"
-            >
+            </Button>
+            <Button size="sm" render={<a href={`/api/services/${currentService.id}/export_title_card`} />}>
               Export Title Card
-            </a>
+            </Button>
           </nav>
         )}
       </header>
+      <Separator className="mb-6" />
 
       <main>
         {view === 'list' && (
           <div>
             <ServiceForm onCreated={handleServiceCreated} />
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h2 className="text-lg font-semibold mb-4">Services</h2>
-              {services.length === 0 && <p className="text-gray-500">No services yet. Create one above.</p>}
-              {services.map((s) => (
-                <div
-                  key={s.id}
-                  className="p-3 border border-gray-100 rounded mb-2 cursor-pointer hover:bg-gray-50 flex gap-4 items-center"
-                  onClick={() => { setCurrentService(s); setView('edit') }}
-                >
-                  <strong>{s.service_date}</strong>
-                  {s.label && <span className="bg-gray-200 px-2 py-0.5 rounded text-xs">{s.label}</span>}
-                  {s.sermon_title && <span className="text-gray-500 italic">{s.sermon_title}</span>}
+            <Card>
+              <CardHeader>
+                <CardTitle>Services</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {services.length === 0 && <p className="text-muted-foreground">No services yet. Create one above.</p>}
+                <div className="flex flex-col gap-2">
+                  {services.map((s) => (
+                    <div
+                      key={s.id}
+                      className="p-3 border border-border rounded-lg cursor-pointer hover:bg-accent flex gap-4 items-center"
+                      onClick={() => { setCurrentService(s); setView('edit') }}
+                    >
+                      <strong>{s.service_date}</strong>
+                      {s.label && <Badge variant="secondary">{s.label}</Badge>}
+                      {s.sermon_title && <span className="text-muted-foreground italic">{s.sermon_title}</span>}
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </CardContent>
+            </Card>
           </div>
         )}
 

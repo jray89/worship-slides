@@ -5,6 +5,7 @@ import ScriptureSlide from './slides/ScriptureSlide';
 import KeyVerseSlide from './slides/KeyVerseSlide';
 import ClosingSlide from './slides/ClosingSlide';
 import PrivatePrayerSlide from './slides/PrivatePrayerSlide';
+import { Button } from '@/components/ui/button';
 
 interface RenderedPage {
   slide_type: string;
@@ -15,7 +16,7 @@ export default function SlideCarousel({ pages }: { pages: RenderedPage[] }) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   if (pages.length === 0)
-    return <p className='text-gray-500'>No slides to preview.</p>;
+    return <p className="text-muted-foreground">No slides to preview.</p>;
 
   const page = pages[currentIndex];
 
@@ -54,29 +55,29 @@ export default function SlideCarousel({ pages }: { pages: RenderedPage[] }) {
   }
 
   return (
-    <div className='text-center'>
-      <div className='flex justify-center items-center gap-5 mb-5'>
-        <button
-          className='px-4 py-2 bg-gray-200 text-gray-700 rounded'
+    <div className="text-center">
+      <div className="flex justify-center items-center gap-5 mb-5">
+        <Button
+          variant="outline"
           onClick={() => setCurrentIndex(Math.max(0, currentIndex - 1))}
           disabled={currentIndex === 0}
         >
           &larr; Prev
-        </button>
-        <span className='text-sm'>
+        </Button>
+        <span className="text-sm text-muted-foreground">
           Slide {currentIndex + 1} of {pages.length}
         </span>
-        <button
-          className='px-4 py-2 bg-gray-200 text-gray-700 rounded'
+        <Button
+          variant="outline"
           onClick={() =>
             setCurrentIndex(Math.min(pages.length - 1, currentIndex + 1))
           }
           disabled={currentIndex === pages.length - 1}
         >
           Next &rarr;
-        </button>
+        </Button>
       </div>
-      <div className='origin-top-center'>{renderPage(page)}</div>
+      <div className="origin-top-center">{renderPage(page)}</div>
     </div>
   );
 }
