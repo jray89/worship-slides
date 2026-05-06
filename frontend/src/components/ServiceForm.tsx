@@ -1,4 +1,8 @@
 import React, { useState } from 'react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Button } from '@/components/ui/button'
 
 interface ServiceFormProps {
   onCreated: (service: any) => void
@@ -24,35 +28,35 @@ export default function ServiceForm({ onCreated }: ServiceFormProps) {
   }
 
   return (
-    <form className="bg-white p-6 rounded-lg shadow-sm mb-6" onSubmit={handleSubmit}>
-      <h2 className="text-lg font-semibold mb-4">New Service</h2>
-      <div className="flex gap-4 mb-4 flex-wrap">
-        <label className="flex flex-col gap-1 text-sm font-semibold flex-1 min-w-[150px]">
-          Date
-          <input type="date" value={date} onChange={(e) => setDate(e.target.value)} required
-            className="p-2 border border-gray-300 rounded text-sm font-normal" />
-        </label>
-        <label className="flex flex-col gap-1 text-sm font-semibold flex-1 min-w-[150px]">
-          Label
-          <input type="text" value={label} onChange={(e) => setLabel(e.target.value)} placeholder="AM, PM, Wednesday..."
-            className="p-2 border border-gray-300 rounded text-sm font-normal" />
-        </label>
-      </div>
-      <div className="flex gap-4 mb-4 flex-wrap">
-        <label className="flex flex-col gap-1 text-sm font-semibold flex-1 min-w-[150px]">
-          Sermon Title
-          <input type="text" value={sermonTitle} onChange={(e) => setSermonTitle(e.target.value)} placeholder="e.g. Spiritually Healthy Old Men"
-            className="p-2 border border-gray-300 rounded text-sm font-normal" />
-        </label>
-        <label className="flex flex-col gap-1 text-sm font-semibold flex-1 min-w-[150px]">
-          Sermon Reference
-          <input type="text" value={sermonReference} onChange={(e) => setSermonReference(e.target.value)} placeholder="e.g. Titus 2:2"
-            className="p-2 border border-gray-300 rounded text-sm font-normal" />
-        </label>
-      </div>
-      <button type="submit" className="px-5 py-2.5 bg-gray-800 text-white rounded text-sm hover:bg-gray-700">
-        Create Service
-      </button>
-    </form>
+    <Card className="mb-6">
+      <CardHeader>
+        <CardTitle>New Service</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit}>
+          <div className="flex gap-4 mb-4 flex-wrap">
+            <div className="flex flex-col gap-1.5 flex-1 min-w-[150px]">
+              <Label htmlFor="service-date">Date</Label>
+              <Input id="service-date" type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
+            </div>
+            <div className="flex flex-col gap-1.5 flex-1 min-w-[150px]">
+              <Label htmlFor="service-label">Label</Label>
+              <Input id="service-label" type="text" value={label} onChange={(e) => setLabel(e.target.value)} placeholder="AM, PM, Wednesday..." />
+            </div>
+          </div>
+          <div className="flex gap-4 mb-4 flex-wrap">
+            <div className="flex flex-col gap-1.5 flex-1 min-w-[150px]">
+              <Label htmlFor="sermon-title">Sermon Title</Label>
+              <Input id="sermon-title" type="text" value={sermonTitle} onChange={(e) => setSermonTitle(e.target.value)} placeholder="e.g. Spiritually Healthy Old Men" />
+            </div>
+            <div className="flex flex-col gap-1.5 flex-1 min-w-[150px]">
+              <Label htmlFor="sermon-ref">Sermon Reference</Label>
+              <Input id="sermon-ref" type="text" value={sermonReference} onChange={(e) => setSermonReference(e.target.value)} placeholder="e.g. Titus 2:2" />
+            </div>
+          </div>
+          <Button type="submit">Create Service</Button>
+        </form>
+      </CardContent>
+    </Card>
   )
 }
