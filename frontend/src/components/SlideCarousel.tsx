@@ -4,6 +4,7 @@ import PsalmSlide from './slides/PsalmSlide';
 import ScriptureSlide from './slides/ScriptureSlide';
 import KeyVerseSlide from './slides/KeyVerseSlide';
 import ClosingSlide from './slides/ClosingSlide';
+import PrivatePrayerSlide from './slides/PrivatePrayerSlide';
 
 interface RenderedPage {
   slide_type: string;
@@ -24,6 +25,8 @@ export default function SlideCarousel({ pages }: { pages: RenderedPage[] }) {
         return <WelcomeSlide />;
       case 'closing':
         return <ClosingSlide />;
+      case 'private_prayer':
+        return <PrivatePrayerSlide />;
       case 'psalm':
         return (
           <PsalmSlide

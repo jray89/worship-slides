@@ -20,6 +20,8 @@ class SlideRenderer
       [ { slide_type: "welcome", content: {} } ]
     when "closing"
       [ { slide_type: "closing", content: {} } ]
+    when "private_prayer"
+      [ { slide_type: "private_prayer", content: {} } ]
     when "psalm"
       render_psalm(slide)
     when "scripture"

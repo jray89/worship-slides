@@ -47,8 +47,8 @@ export default function TitleCard({
           </p>
           <p
             style={{
-              color: '#ccc',
-              fontSize: '36pt',
+              color: '#d9d9d9',
+              fontSize: '34pt',
               margin: '0',
               lineHeight: '1.3',
             }}

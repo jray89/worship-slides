@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import WelcomeSlide from './slides/WelcomeSlide';
 import ClosingSlide from './slides/ClosingSlide';
+import PrivatePrayerSlide from './slides/PrivatePrayerSlide';
 import PsalmSlide from './slides/PsalmSlide';
 import KeyVerseSlide from './slides/KeyVerseSlide';
 import ScriptureSlide from './slides/ScriptureSlide';
@@ -14,7 +15,8 @@ interface RenderedPage {
 function renderPage(p: RenderedPage) {
   switch (p.slide_type) {
     case 'welcome':   return <WelcomeSlide />;
-    case 'closing':   return <ClosingSlide />;
+    case 'closing':        return <ClosingSlide />;
+    case 'private_prayer': return <PrivatePrayerSlide />;
     case 'psalm':     return <PsalmSlide reference={p.content.reference} stanza={p.content.stanza} />;
     case 'scripture': return <ScriptureSlide reference={p.content.reference} text={p.content.text} />;
     case 'key_verse': return <KeyVerseSlide reference={p.content.reference} text={p.content.text} />;

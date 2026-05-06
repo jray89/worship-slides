@@ -50,7 +50,7 @@ export default function PsalmSlide({ reference, stanza }: PsalmSlideProps) {
                   style={{
                     marginRight: '10px',
                     fontSize: '24pt',
-                    verticalAlign: 'top',
+                    verticalAlign: 'middle',
                   }}
                 >
                   {verseNum}

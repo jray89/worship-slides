@@ -82,6 +82,7 @@ export default function SlideEditor({ service, slides, onSlidesChanged, onServic
           : `${slide.psalm_number}`
         return `Psalm ${ref} (${slide.psalm_version})`
       }
+      case 'private_prayer': return 'Private Prayer'
       case 'scripture': return `Scripture: ${slide.scripture_reference}`
       case 'key_verse': return `Key Verse: ${slide.scripture_reference}`
       default: return slide.slide_type
@@ -145,6 +146,7 @@ export default function SlideEditor({ service, slides, onSlidesChanged, onServic
               <option value="psalm">Psalm</option>
               <option value="scripture">Scripture Reading</option>
               <option value="key_verse">Key Verse</option>
+              <option value="private_prayer">Private Prayer</option>
               <option value="closing">Closing</option>
             </select>
           </label>
