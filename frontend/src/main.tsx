@@ -1,7 +1,10 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import App from './App';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import AppLayout from './components/AppLayout';
+import ServiceListPage from './pages/ServiceListPage';
+import ServiceEditPage from './pages/ServiceEditPage';
+import ServicePreviewPage from './pages/ServicePreviewPage';
 import PrintSlidesView from './components/PrintSlidesView';
 import PrintTitleCardView from './components/PrintTitleCardView';
 import './index.css';
@@ -12,9 +15,14 @@ if (container) {
   root.render(
     <BrowserRouter>
       <Routes>
-        <Route path="/print/:id/slides" element={<PrintSlidesView />} />
-        <Route path="/print/:id/title_card" element={<PrintTitleCardView />} />
-        <Route path="*" element={<App />} />
+        <Route path="/" element={<Navigate to="/services" replace />} />
+        <Route element={<AppLayout />}>
+          <Route path="/services" element={<ServiceListPage />} />
+          <Route path="/services/:id/edit" element={<ServiceEditPage />} />
+          <Route path="/services/:id/preview" element={<ServicePreviewPage />} />
+        </Route>
+        <Route path="/services/:id/print/slides" element={<PrintSlidesView />} />
+        <Route path="/services/:id/print/title_card" element={<PrintTitleCardView />} />
       </Routes>
     </BrowserRouter>
   );
