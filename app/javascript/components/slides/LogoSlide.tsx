@@ -14,15 +14,14 @@ export default function LogoSlide({ subtitle }: LogoSlideProps) {
           alignItems: 'center',
           justifyContent: 'center',
           height: '100%',
-          padding: '40px',
           textAlign: 'center',
         }}
       >
         {subtitle && (
           <p
             style={{
-              fontSize: '32px',
-              marginBottom: '40px',
+              fontSize: '40pt',
+              marginBottom: '75px',
             }}
           >
             {subtitle}
@@ -33,14 +32,14 @@ export default function LogoSlide({ subtitle }: LogoSlideProps) {
           src='/images/logo-white.png'
           alt='Reformation Presbyterian Church'
           style={{
-            width: '250px',
-            height: '250px',
+            width: '450px',
+            height: '450px',
             objectFit: 'contain',
-            marginBottom: '40px',
+            marginBottom: '75px',
           }}
         />
 
-        <div style={{ fontSize: '28px', lineHeight: '1.6' }}>
+        <div style={{ fontSize: '40pt', lineHeight: '1.2' }}>
           <p style={{ margin: '4px 0' }}>
             Sunday 2pm &amp; 5pm | Wednesday 7pm
           </p>

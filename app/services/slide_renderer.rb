@@ -1,5 +1,5 @@
 class SlideRenderer
-  MAX_CHARS_PER_LINE = 72
+  MAX_CHARS_PER_LINE = 68
   MAX_LINES_PER_PAGE = 8
 
   def render_service(service)
@@ -62,15 +62,18 @@ class SlideRenderer
     return [] unless data
 
     reference = data["display_reference"] || slide.scripture_reference
-    full_text = data["full_text"] || ""
+    paragraphs = data["paragraphs"]
 
-    paginate_text(full_text).map do |page_text|
+    pages = if paragraphs.present?
+      paginate_paragraphs(paragraphs)
+    else
+      paginate_text(data["full_text"] || "")
+    end
+
+    pages.map do |lines|
       {
         slide_type: "scripture",
-        content: {
-          reference: reference,
-          text: page_text
-        }
+        content: { reference: reference, text: lines }
       }
     end
   end
@@ -91,6 +94,54 @@ class SlideRenderer
     } ]
   end
 
+  def paginate_paragraphs(paragraphs)
+    pages = []
+    current_lines = []
+
+    paragraphs.each_with_index do |para_text, para_idx|
+      # Add blank line between paragraphs (not before the first)
+      if para_idx > 0 && current_lines.any?
+        if current_lines.length >= MAX_LINES_PER_PAGE
+          pages << current_lines.dup
+          current_lines = []
+        else
+          current_lines << ""
+        end
+      end
+
+      # Wrap the paragraph text into lines
+      para_lines = wrap_text(para_text)
+
+      para_lines.each do |line|
+        current_lines << line
+        if current_lines.length >= MAX_LINES_PER_PAGE
+          pages << current_lines.dup
+          current_lines = []
+        end
+      end
+    end
+
+    pages << current_lines unless current_lines.empty?
+    pages
+  end
+
+  def wrap_text(text)
+    words = text.split
+    lines = []
+    current = ""
+    words.each do |word|
+      test = current.empty? ? word : "#{current} #{word}"
+      if test.length > MAX_CHARS_PER_LINE
+        lines << current unless current.empty?
+        current = word
+      else
+        current = test
+      end
+    end
+    lines << current unless current.empty?
+    lines
+  end
+
   def paginate_text(full_text)
     words = full_text.split
     pages = []
@@ -105,7 +156,7 @@ class SlideRenderer
         current_line = word
 
         if current_lines.length >= MAX_LINES_PER_PAGE
-          pages << current_lines.join(" ")
+          pages << current_lines.dup
           current_lines = []
         end
       else
@@ -114,7 +165,7 @@ class SlideRenderer
     end
 
     current_lines << current_line unless current_line.empty?
-    pages << current_lines.join(" ") unless current_lines.empty?
+    pages << current_lines.dup unless current_lines.empty?
 
     pages
   end

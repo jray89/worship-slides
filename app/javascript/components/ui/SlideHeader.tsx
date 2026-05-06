@@ -3,11 +3,11 @@ export function SlideHeader({ children }: { children: React.ReactNode }) {
     <h1
       style={{
         textAlign: 'center',
-        fontSize: '60px',
+        fontSize: '72pt',
         fontWeight: 'normal',
-        marginTop: '50px',
-        marginBottom: '50px',
-        height: '100px',
+        marginTop: '75px',
+        marginBottom: '25px',
+        height: '200px',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',

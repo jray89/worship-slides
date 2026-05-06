@@ -17,30 +17,37 @@ class ScriptureScraper
     passage.css("sup.crossreference, sup.footnote").each(&:remove)
 
     verses = []
+    paragraphs = []
 
-    passage.css(".text").each do |text_el|
-      # Extract verse number
-      verse_number = nil
+    passage.css("p").each do |para|
+      para_verses = []
 
-      # Chapter number (verse 1) uses .chapternum class
-      chapternum_el = text_el.css(".chapternum").first
-      if chapternum_el
-        verse_number = 1
-        chapternum_el.remove
+      para.css(".text").each do |text_el|
+        verse_number = nil
+
+        chapternum_el = text_el.css(".chapternum").first
+        if chapternum_el
+          verse_number = 1
+          chapternum_el.remove
+        end
+
+        versenum_el = text_el.css(".versenum").first
+        if versenum_el
+          num_text = versenum_el.text.strip.gsub(/\D/, "")
+          verse_number = num_text.to_i if num_text.present?
+          versenum_el.remove
+        end
+
+        text = text_el.text.strip
+        next if text.empty?
+
+        para_verses << { "number" => verse_number, "text" => text }
       end
 
-      # Regular verse numbers
-      versenum_el = text_el.css(".versenum").first
-      if versenum_el
-        num_text = versenum_el.text.strip.gsub(/\D/, "")
-        verse_number = num_text.to_i if num_text.present?
-        versenum_el.remove
-      end
+      next if para_verses.empty?
 
-      text = text_el.text.strip
-      next if text.empty?
-
-      verses << { "number" => verse_number, "text" => text }
+      verses.concat(para_verses)
+      paragraphs << para_verses.map { |v| v["text"] }.join(" ")
     end
 
     # Parse book and chapter from the reference
@@ -51,6 +58,7 @@ class ScriptureScraper
       "chapter" => parsed[:chapter],
       "verse_spec" => parsed[:verse_spec],
       "verses" => verses,
+      "paragraphs" => paragraphs,
       "full_text" => verses.map { |v| v["text"] }.join(" "),
       "display_reference" => build_display_reference(parsed)
     }

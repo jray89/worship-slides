@@ -24,22 +24,21 @@ export default function TitleCard({
       <div
         style={{
           position: 'absolute',
-          bottom: '0',
-          left: '0',
-          right: '0',
-          height: '120px',
+          inset: 'auto 120px 65px',
+          height: '150px',
           background:
-            'linear-gradient(to right, #000 0%, #000 40%, #666 70%, #fff 100%)',
+            'linear-gradient(to right, rgb(0, 0, 0) 0%, transparent 100%)',
           display: 'flex',
           alignItems: 'center',
-          paddingLeft: '140px',
+          textAlign: 'left',
+          paddingLeft: '150px',
         }}
       >
         <div>
           <p
             style={{
               color: '#fff',
-              fontSize: '40px',
+              fontSize: '40pt',
               margin: '0',
               lineHeight: '1.3',
             }}
@@ -49,7 +48,7 @@ export default function TitleCard({
           <p
             style={{
               color: '#ccc',
-              fontSize: '28px',
+              fontSize: '36pt',
               margin: '0',
               lineHeight: '1.3',
             }}
@@ -61,14 +60,14 @@ export default function TitleCard({
 
       {/* RPC logo on the left, overlapping the bar */}
       <img
-        src='/images/rpc-logo.png'
+        src='/images/logo-white.png'
         alt='RPC'
         style={{
           position: 'absolute',
-          bottom: '10px',
-          left: '20px',
-          width: '130px',
-          height: '130px',
+          bottom: '40px',
+          left: '40px',
+          width: '200px',
+          height: '200px',
           objectFit: 'contain',
         }}
       />

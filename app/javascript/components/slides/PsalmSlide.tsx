@@ -1,4 +1,3 @@
-import React from 'react';
 import SlideBase, { SlideLogoCorner } from './SlideBase';
 import { SlideHeader } from '../ui/SlideHeader';
 
@@ -28,9 +27,9 @@ export default function PsalmSlide({ reference, stanza }: PsalmSlideProps) {
           justifyContent: 'center',
           padding: '20px',
           marginTop: '40px',
-          gap: '10px',
+          gap: '44pt',
           position: 'absolute',
-          inset: '100px 0 0',
+          inset: '75px',
         }}
       >
         {stanza.lines.map((line, i) => {
@@ -40,8 +39,8 @@ export default function PsalmSlide({ reference, stanza }: PsalmSlideProps) {
               key={i}
               style={{
                 fontFamily: 'arial, sans-serif',
-                fontSize: '22pt',
-                lineHeight: '1.8',
+                fontSize: '44pt',
+                lineHeight: '1',
                 margin: '0',
                 textAlign: 'center',
               }}
@@ -49,7 +48,9 @@ export default function PsalmSlide({ reference, stanza }: PsalmSlideProps) {
               {verseNum != null && (
                 <sup
                   style={{
-                    marginRight: '6px',
+                    marginRight: '10px',
+                    fontSize: '24pt',
+                    verticalAlign: 'top',
                   }}
                 >
                   {verseNum}

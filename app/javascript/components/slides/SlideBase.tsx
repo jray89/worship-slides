@@ -35,10 +35,10 @@ export function SlideLogoCorner() {
       alt='RPC'
       style={{
         position: 'absolute',
-        top: '50px',
-        right: '50px',
-        width: '100px',
-        height: '100px',
+        top: '75px',
+        right: '75px',
+        width: '200px',
+        height: '200px',
         objectFit: 'contain',
       }}
     />
