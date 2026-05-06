@@ -39,7 +39,7 @@ module Api
     end
 
     def export_pdf
-      base = ENV.fetch("FRONTEND_URL", request.base_url)
+      base = frontend_base_url
       url = "#{base}/print/#{service.id}/slides"
       pdf = Grover.new(url,
         viewport: { width: 1920, height: 1080 },
@@ -57,7 +57,7 @@ module Api
     end
 
     def export_title_card
-      base = ENV.fetch("FRONTEND_URL", request.base_url)
+      base = frontend_base_url
       url = "#{base}/print/#{service.id}/title_card"
       png = Grover.new(url,
         type: "png",
@@ -79,6 +79,10 @@ module Api
     end
 
     private
+
+    def frontend_base_url
+      ENV.fetch("FRONTEND_URL") { Rails.env.development? ? "http://localhost:5174" : request.base_url }
+    end
 
     def service
       @service ||= Service.find(params[:id])
