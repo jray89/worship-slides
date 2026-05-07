@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import SlideCarousel from '@/components/SlideCarousel'
 import TitleCardPreview from '@/components/TitleCardPreview'
+import { apiFetch } from '@/lib/api'
 
 interface RenderedPage {
   slide_type: string
@@ -21,12 +22,12 @@ export default function ServicePreviewPage() {
   }, [id])
 
   async function fetchService(serviceId: string) {
-    const res = await fetch(`/api/services/${serviceId}`)
+    const res = await apiFetch(`/services/${serviceId}`)
     setService(await res.json())
   }
 
   async function fetchPreview(serviceId: string) {
-    const res = await fetch(`/api/services/${serviceId}/preview_data`)
+    const res = await apiFetch(`/services/${serviceId}/preview_data`)
     const data = await res.json()
     setPages(data.pages)
   }

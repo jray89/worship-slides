@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
+import { apiFetch } from '@/lib/api'
 
 interface ServiceFormProps {
   onCreated: (service: any) => void
@@ -16,7 +17,7 @@ export default function ServiceForm({ onCreated }: ServiceFormProps) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    const res = await fetch('/api/services', {
+    const res = await apiFetch('/services', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ service: { service_date: date, label, sermon_title: sermonTitle, sermon_reference: sermonReference } }),

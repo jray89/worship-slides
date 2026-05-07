@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { apiFetch } from '@/lib/api';
 
 interface SlideEditorProps {
   service: any;
@@ -52,7 +53,7 @@ export default function SlideEditor({
         body.slide.scripture_reference = scriptureRef;
       }
 
-      const res = await fetch(`/api/services/${service.id}/slides`, {
+      const res = await apiFetch(`/services/${service.id}/slides`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
@@ -73,14 +74,14 @@ export default function SlideEditor({
   }
 
   async function removeSlide(slideId: number) {
-    await fetch(`/api/services/${service.id}/slides/${slideId}`, {
+    await apiFetch(`/services/${service.id}/slides/${slideId}`, {
       method: 'DELETE',
     });
     onSlidesChanged();
   }
 
   async function moveSlide(slideId: number, direction: 'up' | 'down') {
-    await fetch(`/api/services/${service.id}/slides/${slideId}/move`, {
+    await apiFetch(`/services/${service.id}/slides/${slideId}/move`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ direction }),
@@ -89,7 +90,7 @@ export default function SlideEditor({
   }
 
   async function updateService() {
-    const res = await fetch(`/api/services/${service.id}`, {
+    const res = await apiFetch(`/services/${service.id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

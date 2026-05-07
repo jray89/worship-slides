@@ -1,7 +1,5 @@
 module Api
-  class SlidesController < ApplicationController
-    skip_before_action :verify_authenticity_token
-
+  class SlidesController < BaseController
     def index
       render json: service.slides.order(:position)
     end
