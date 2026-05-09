@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import ServiceForm from '@/components/ServiceForm'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Trash2 } from 'lucide-react'
 import { apiFetch } from '@/lib/api'
 
 interface Service {
@@ -29,6 +31,13 @@ export default function ServiceListPage() {
     navigate(`/services/${service.id}/edit`)
   }
 
+  async function deleteService(e: React.MouseEvent, id: number) {
+    e.stopPropagation()
+    if (!window.confirm('Delete this service and all its slides?')) return
+    await apiFetch(`/services/${id}`, { method: 'DELETE' })
+    await fetchServices()
+  }
+
   return (
     <div>
       <ServiceForm onCreated={handleServiceCreated} />
@@ -48,6 +57,15 @@ export default function ServiceListPage() {
                 <strong>{s.service_date}</strong>
                 {s.label && <Badge variant="secondary">{s.label}</Badge>}
                 {s.sermon_title && <span className="text-muted-foreground italic">{s.sermon_title}</span>}
+                <span className="ml-auto">
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={(e) => deleteService(e, s.id)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </span>
               </div>
             ))}
           </div>
