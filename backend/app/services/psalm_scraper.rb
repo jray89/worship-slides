@@ -1,12 +1,17 @@
-require "open-uri"
+require "net/http"
 require "nokogiri"
 
 class PsalmScraper
   CENTERED_P = "p.text-center, p[style*='center']"
 
+  HEADERS = {
+    "User-Agent" => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
+    "Accept" => "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language" => "en-US,en;q=0.9"
+  }.freeze
+
   def fetch(psalm_number)
-    url = "https://thewestminsterstandard.org/psalm-#{psalm_number}/"
-    doc = Nokogiri::HTML(URI.open(url, "User-Agent" => "Mozilla/5.0"))
+    doc = fetch_page("https://thewestminsterstandard.org/psalm-#{psalm_number}/")
 
     result = {}
 
@@ -28,10 +33,32 @@ class PsalmScraper
       end
     end
 
+    raise "Could not find psalm content for Psalm #{psalm_number} — the source site may be blocking this request" if result.empty?
+
     result
   end
 
   private
+
+  def fetch_page(url, redirect_limit = 3)
+    raise "Too many redirects fetching psalm" if redirect_limit == 0
+
+    uri = URI(url)
+    response = Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == "https", open_timeout: 10, read_timeout: 15) do |http|
+      request = Net::HTTP::Get.new(uri)
+      HEADERS.each { |k, v| request[k] = v }
+      http.request(request)
+    end
+
+    case response
+    when Net::HTTPSuccess
+      Nokogiri::HTML(response.body)
+    when Net::HTTPRedirection
+      fetch_page(response["location"], redirect_limit - 1)
+    else
+      raise "Failed to fetch psalm: HTTP #{response.code}"
+    end
+  end
 
   def parse_stanzas_from(container)
     container.css(CENTERED_P).filter_map { |p| parse_stanza(p) }
