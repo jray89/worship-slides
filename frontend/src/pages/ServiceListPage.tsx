@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import ServiceForm from '@/components/ServiceForm'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { apiFetch } from '@/lib/api'
 
 interface Service {
   id: number
@@ -19,7 +20,7 @@ export default function ServiceListPage() {
   useEffect(() => { fetchServices() }, [])
 
   async function fetchServices() {
-    const res = await fetch('/api/services')
+    const res = await apiFetch('/services')
     setServices(await res.json())
   }
 

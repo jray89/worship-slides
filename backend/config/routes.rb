@@ -2,6 +2,9 @@ Rails.application.routes.draw do
   root "fallback#index"
 
   namespace :api do
+    post "login", to: "auth#login"
+    get "me", to: "auth#me"
+
     resources :services do
       resources :slides, only: [ :index, :create, :update, :destroy ] do
         member do

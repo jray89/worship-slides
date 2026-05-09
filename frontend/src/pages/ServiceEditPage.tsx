@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import SlideEditor from '@/components/SlideEditor'
+import { apiFetch } from '@/lib/api'
 
 export default function ServiceEditPage() {
   const { id } = useParams<{ id: string }>()
@@ -15,12 +16,12 @@ export default function ServiceEditPage() {
   }, [id])
 
   async function fetchService(serviceId: string) {
-    const res = await fetch(`/api/services/${serviceId}`)
+    const res = await apiFetch(`/services/${serviceId}`)
     setService(await res.json())
   }
 
   async function fetchSlides(serviceId: string) {
-    const res = await fetch(`/api/services/${serviceId}/slides`)
+    const res = await apiFetch(`/services/${serviceId}/slides`)
     setSlides(await res.json())
   }
 

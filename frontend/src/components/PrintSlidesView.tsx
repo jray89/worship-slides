@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import WelcomeSlide from './slides/WelcomeSlide';
 import ClosingSlide from './slides/ClosingSlide';
 import PrivatePrayerSlide from './slides/PrivatePrayerSlide';
@@ -26,17 +26,20 @@ function renderPage(p: RenderedPage) {
 
 export default function PrintSlidesView() {
   const { id } = useParams<{ id: string }>();
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get('token');
   const [pages, setPages] = useState<RenderedPage[]>([]);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    fetch(`/api/services/${id}/preview_data`)
+    const headers: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {};
+    fetch(`/api/services/${id}/preview_data`, { headers })
       .then((r) => r.json())
       .then((data) => {
         setPages(data.pages);
         setLoaded(true);
       });
-  }, [id]);
+  }, [id, token]);
 
   if (!loaded) return <div id='print-loading'>Loading...</div>;
 

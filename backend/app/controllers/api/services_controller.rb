@@ -1,7 +1,5 @@
 module Api
-  class ServicesController < ApplicationController
-    skip_before_action :verify_authenticity_token, only: [ :create, :update, :destroy ]
-
+  class ServicesController < BaseController
     def index
       render json: Service.order(service_date: :desc)
     end
@@ -40,7 +38,7 @@ module Api
 
     def export_pdf
       base = frontend_base_url
-      url = "#{base}/print/#{service.id}/slides"
+      url = "#{base}/print/#{service.id}/slides?token=#{export_token}"
       pdf = Grover.new(url,
         viewport: { width: 1920, height: 1080 },
         width: "1920px",
@@ -58,7 +56,7 @@ module Api
 
     def export_title_card
       base = frontend_base_url
-      url = "#{base}/print/#{service.id}/title_card"
+      url = "#{base}/print/#{service.id}/title_card?token=#{export_token}"
       png = Grover.new(url,
         type: "png",
         viewport: { width: 1920, height: 1080 },
@@ -82,6 +80,10 @@ module Api
 
     def frontend_base_url
       ENV.fetch("FRONTEND_URL") { Rails.env.development? ? "http://localhost:5174" : request.base_url }
+    end
+
+    def export_token
+      JwtService.encode({ user_id: current_user.id }, exp: 5.minutes.from_now)
     end
 
     def service

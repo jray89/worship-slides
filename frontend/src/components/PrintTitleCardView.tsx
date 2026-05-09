@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import TitleCard from './slides/TitleCard';
 
 export default function PrintTitleCardView() {
   const { id } = useParams<{ id: string }>();
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get('token');
   const [service, setService] = useState<any>(null);
 
   useEffect(() => {
-    fetch(`/api/services/${id}`)
+    const headers: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {};
+    fetch(`/api/services/${id}`, { headers })
       .then((r) => r.json())
       .then((data) => setService(data));
-  }, [id]);
+  }, [id, token]);
 
   if (!service) return <div id="print-loading">Loading...</div>;
 
