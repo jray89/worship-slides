@@ -24,7 +24,7 @@ RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential git libvips libyaml-dev libpq-dev pkg-config && \
     curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
     apt-get install -y nodejs && \
-    npm install -g pnpm && \
+    npm install -g pnpm@9 && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Install backend gems
