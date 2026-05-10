@@ -32,6 +32,12 @@ export default function PrintSlidesView() {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
+    const embedded = (window as any).__PRINT_DATA__;
+    if (embedded) {
+      setPages(embedded.pages);
+      setLoaded(true);
+      return;
+    }
     const headers: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {};
     fetch(`/api/services/${id}/preview_data`, { headers })
       .then((r) => r.json())

@@ -9,6 +9,11 @@ export default function PrintTitleCardView() {
   const [service, setService] = useState<any>(null);
 
   useEffect(() => {
+    const embedded = (window as any).__PRINT_DATA__;
+    if (embedded) {
+      setService(embedded);
+      return;
+    }
     const headers: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {};
     fetch(`/api/services/${id}`, { headers })
       .then((r) => r.json())
