@@ -38,5 +38,11 @@ frontend/dist
 backend/public/index.html
 backend/public/assets
 
+# Claude Code local config
+.claude/
+
+# Dev build artifacts
+backend/public/vite-dev/
+
 # Vite env overrides
 *.local
