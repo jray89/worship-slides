@@ -37,14 +37,17 @@ module Api
     end
 
     def export_pdf
-      base = frontend_base_url
-      url = "#{base}/print/#{service.id}/slides?token=#{export_token}"
-      pdf = Grover.new(url,
+      renderer = SlideRenderer.new
+      pages = renderer.render_service(service)
+      html = print_html({ pages: pages })
+
+      pdf = Grover.new(html,
+        display_url: "#{request.base_url}/services/#{service.id}/print/slides",
         viewport: { width: 1920, height: 1080 },
         width: "1920px",
         height: "1080px",
         print_background: true,
-        wait_until: "domcontentloaded",
+        wait_until: "networkidle0",
         wait_for_selector: "#print-ready"
       ).to_pdf
 
@@ -55,14 +58,16 @@ module Api
     end
 
     def export_title_card
-      base = frontend_base_url
-      url = "#{base}/print/#{service.id}/title_card?token=#{export_token}"
-      png = Grover.new(url,
+      data = { sermon_title: service.sermon_title, sermon_reference: service.sermon_reference }
+      html = print_html(data)
+
+      png = Grover.new(html,
+        display_url: "#{request.base_url}/services/#{service.id}/print/title_card",
         type: "png",
         viewport: { width: 1920, height: 1080 },
         full_page: false,
         omit_background: true,
-        wait_until: "domcontentloaded",
+        wait_until: "networkidle0",
         wait_for_selector: "#print-ready"
       ).to_png
 
@@ -78,12 +83,45 @@ module Api
 
     private
 
-    def frontend_base_url
-      ENV.fetch("FRONTEND_URL") { Rails.env.development? ? "http://localhost:5174" : request.base_url }
+    def print_html(data)
+      json = data.to_json.gsub("</", "<\\/")
+
+      <<~HTML
+        <!DOCTYPE html>
+        <html lang="en">
+          <head>
+            <meta charset="UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <script>window.__PRINT_DATA__ = #{json};</script>
+            #{frontend_assets}
+          </head>
+          <body>
+            <div id="app"></div>
+          </body>
+        </html>
+      HTML
     end
 
-    def export_token
-      JwtService.encode({ user_id: current_user.id }, exp: 5.minutes.from_now)
+    def frontend_assets
+      index_html = frontend_index_path
+      return "" unless File.exist?(index_html)
+
+      doc = File.read(index_html)
+      scripts = doc.scan(/<script[^>]*src="([^"]+)"[^>]*>/).map do |src,|
+        %(<script type="module" crossorigin src="#{src}"></script>)
+      end
+      styles = doc.scan(/<link[^>]*href="([^"]+\.css)"[^>]*>/).map do |href,|
+        %(<link rel="stylesheet" crossorigin href="#{href}">)
+      end
+      (styles + scripts).join("\n    ")
+    end
+
+    def frontend_index_path
+      candidates = [
+        Rails.root.join("public", "index.html"),
+        Rails.root.join("..", "frontend", "dist", "index.html")
+      ]
+      candidates.map(&:to_s).find { |p| File.exist?(p) } || ""
     end
 
     def service
