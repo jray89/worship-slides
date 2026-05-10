@@ -59,7 +59,7 @@ module Api
 
     def export_title_card
       data = { sermon_title: service.sermon_title, sermon_reference: service.sermon_reference }
-      html = print_html(data)
+      html = print_html(data, transparent: true)
 
       png = Grover.new(html,
         display_url: "#{request.base_url}/services/#{service.id}/print/title_card",
@@ -83,8 +83,9 @@ module Api
 
     private
 
-    def print_html(data)
+    def print_html(data, transparent: false)
       json = data.to_json.gsub("</", "<\\/")
+      body_style = transparent ? ' style="background: transparent !important;"' : ""
 
       <<~HTML
         <!DOCTYPE html>
@@ -95,7 +96,7 @@ module Api
             <script>window.__PRINT_DATA__ = #{json};</script>
             #{frontend_assets}
           </head>
-          <body>
+          <body#{body_style}>
             <div id="app"></div>
           </body>
         </html>
