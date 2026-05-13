@@ -33,6 +33,8 @@ class SlideRenderer
     end
   end
 
+  MAX_PSALM_LINES_PER_SLIDE = 4
+
   def render_psalm(slide)
     data = slide.content_data
     return [] unless data
@@ -44,18 +46,36 @@ class SlideRenderer
       "Psalm #{slide.psalm_number}"
     end
 
-    stanzas.map do |stanza|
+    stanzas.flat_map { |stanza| split_stanza(stanza) }.map do |stanza|
       {
         slide_type: "psalm",
         content: {
           reference: reference,
           stanza: {
             lines: stanza["lines"],
-            # Normalize: old DB data may have array format, new has hash format
             verse_numbers: stanza["verse_numbers"].is_a?(Hash) ? stanza["verse_numbers"] : {}
           }
         }
       }
+    end
+  end
+
+  def split_stanza(stanza)
+    lines = stanza["lines"] || []
+    return [stanza] if lines.length < MAX_PSALM_LINES_PER_SLIDE * 2
+
+    verse_numbers = stanza["verse_numbers"].is_a?(Hash) ? stanza["verse_numbers"] : {}
+
+    lines.each_slice(MAX_PSALM_LINES_PER_SLIDE).map do |chunk_lines|
+      chunk_start = lines.index(chunk_lines.first)
+      chunk_verse_numbers = {}
+      verse_numbers.each do |idx, num|
+        i = idx.to_i
+        if i >= chunk_start && i < chunk_start + chunk_lines.length
+          chunk_verse_numbers[(i - chunk_start).to_s] = num
+        end
+      end
+      { "lines" => chunk_lines, "verse_numbers" => chunk_verse_numbers }
     end
   end
 
