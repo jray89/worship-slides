@@ -124,10 +124,12 @@ class SlideRenderer
       # Add blank line between paragraphs (not before the first)
       if para_idx > 0 && current_lines.any?
         if current_lines.length >= MAX_LINES_PER_PAGE
-          pages << current_lines.dup
-          current_lines = []
+          add_page_and_reset(current_lines, pages)
         else
           current_lines << ""
+          if current_lines.length >= MAX_LINES_PER_PAGE
+            add_page_and_reset(current_lines, pages)
+          end
         end
       end
 
@@ -137,14 +139,18 @@ class SlideRenderer
       para_lines.each do |line|
         current_lines << line
         if current_lines.length >= MAX_LINES_PER_PAGE
-          pages << current_lines.dup
-          current_lines = []
+          add_page_and_reset(current_lines, pages)
         end
       end
     end
 
     pages << current_lines unless current_lines.empty?
     pages
+  end
+
+  def add_page_and_reset(current_lines, pages)
+    pages << current_lines.dup
+    current_lines.clear
   end
 
   def wrap_text(text)
