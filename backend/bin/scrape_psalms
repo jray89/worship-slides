@@ -53,16 +53,32 @@ def parse_psalm(doc)
   if first_tab.any?
     result["first"] = parse_stanzas_from(first_tab.first)
     result["second"] = parse_stanzas_from(second_tab.first) if second_tab.any?
-  else
-    doc.css(".wpb_wrapper").each do |wrapper|
-      paragraphs = wrapper.css(CENTERED_P)
-      if paragraphs.length >= 2
-        result["first"] = parse_stanzas_from(wrapper)
-        break
-      end
-    end
+    return result
   end
 
+  doc.css(".wpb_wrapper").each do |wrapper|
+    paragraphs = wrapper.css(CENTERED_P)
+    if paragraphs.length >= 2
+      result["first"] = parse_stanzas_from(wrapper)
+      break
+    end
+  end
+  return result unless result.empty?
+
+  parse_version_header_layout(doc)
+end
+
+def parse_version_header_layout(doc)
+  result = {}
+  { "first" => "First Version", "second" => "Second Version" }.each do |key, label|
+    em = doc.xpath("//em[starts-with(normalize-space(.), '#{label}')]").first
+    next unless em
+    column = em.ancestors(".vc_col-sm-6").first || em.ancestors(".wpb_wrapper").first
+    next unless column
+    em.remove
+    stanzas = column.css("p").filter_map { |p| parse_stanza(p) }
+    result[key] = stanzas unless stanzas.empty?
+  end
   result
 end
 
@@ -103,6 +119,14 @@ def extract_verse_number!(frag)
   if el
     num = el.text.strip.to_i
     el.parent.remove
+    return num > 0 ? num : nil
+  end
+
+  # Pattern C: bare <sup>N</sup> with only digits inside
+  el = frag.at_css("sup")
+  if el && el.text.strip.match?(/\A\d+\z/)
+    num = el.text.strip.to_i
+    el.remove
     return num > 0 ? num : nil
   end
 
