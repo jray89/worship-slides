@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import {
   Select,
   SelectContent,
@@ -139,162 +138,177 @@ export default function SlideEditor({
   }
 
   return (
-    <Card>
-      <CardContent className="pt-6">
-        <div className="mb-6">
-          <h2 className="text-xl font-semibold">
-            {service.service_date} {service.label}
-          </h2>
-          {!editingService ? (
-            <div className="flex gap-3 items-center mt-2">
-              <span>
-                <strong>{service.sermon_title || '(no sermon title)'}</strong> —{' '}
-                {service.sermon_reference || '(no reference)'}
-              </span>
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={() => setEditingService(true)}
-              >
-                Edit
-              </Button>
-            </div>
-          ) : (
-            <div className="flex gap-3 mt-2 flex-wrap">
-              <Input
-                value={sermonTitle}
-                onChange={(e) => setSermonTitle(e.target.value)}
-                placeholder="Sermon title"
-                className="flex-1"
-              />
-              <Input
-                value={sermonReference}
-                onChange={(e) => setSermonReference(e.target.value)}
-                placeholder="Reference"
-              />
-              <Button onClick={updateService}>Save</Button>
-              <Button
-                variant="secondary"
-                onClick={() => setEditingService(false)}
-              >
-                Cancel
-              </Button>
-            </div>
-          )}
-        </div>
-
-        {/* Slide list */}
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-3">
-            Slides ({slides.reduce((acc, s) => acc + slidePageCount(s), 0)} pages)
-          </h3>
-          {slides.map((slide, index) => (
-            <div
-              key={slide.id}
-              className="flex items-center gap-3 p-2.5 border border-border rounded-lg mb-1"
+    <>
+      <div className='mb-6'>
+        <h2 className='text-xl font-semibold'>
+          {service.service_date} {service.label}
+        </h2>
+        {!editingService ? (
+          <div className='flex gap-3 items-center mt-2'>
+            <span>
+              <strong>{service.sermon_title || '(no sermon title)'}</strong> —{' '}
+              {service.sermon_reference || '(no reference)'}
+            </span>
+            <Button
+              variant='secondary'
+              size='sm'
+              onClick={() => setEditingService(true)}
             >
-              <span className="font-bold text-muted-foreground w-8">{index + 1}.</span>
-              <span className="flex-1">{slideDescription(slide)}</span>
-              <Badge variant="outline">
-                {slidePageCount(slide)} pages
-              </Badge>
-              <div className="flex gap-1">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => moveSlide(slide.id, 'up')}
-                  disabled={index === 0}
-                >
-                  &uarr;
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => moveSlide(slide.id, 'down')}
-                  disabled={index === slides.length - 1}
-                >
-                  &darr;
-                </Button>
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={() => removeSlide(slide.id)}
-                >
-                  &times;
-                </Button>
-              </div>
+              Edit
+            </Button>
+          </div>
+        ) : (
+          <div className='flex gap-3 mt-2 flex-wrap'>
+            <Input
+              value={sermonTitle}
+              onChange={(e) => setSermonTitle(e.target.value)}
+              placeholder='Sermon title'
+              className='flex-1'
+            />
+            <Input
+              value={sermonReference}
+              onChange={(e) => setSermonReference(e.target.value)}
+              placeholder='Reference'
+            />
+            <Button onClick={updateService}>Save</Button>
+            <Button
+              variant='secondary'
+              onClick={() => setEditingService(false)}
+            >
+              Cancel
+            </Button>
+          </div>
+        )}
+      </div>
+      {/* Slide list */}
+      <div className='mb-6'>
+        <h3 className='text-lg font-semibold mb-3'>
+          Slides ({slides.reduce((acc, s) => acc + slidePageCount(s), 0)} pages)
+        </h3>
+        {slides.map((slide, index) => (
+          <div
+            key={slide.id}
+            className='flex items-center gap-3 p-2.5 border border-border rounded-lg mb-1'
+          >
+            <span className='font-bold text-muted-foreground w-8'>
+              {index + 1}.
+            </span>
+            <span className='flex-1'>{slideDescription(slide)}</span>
+            <Badge variant='outline'>{slidePageCount(slide)} pages</Badge>
+            <div className='flex gap-1'>
+              <Button
+                variant='ghost'
+                size='sm'
+                onClick={() => moveSlide(slide.id, 'up')}
+                disabled={index === 0}
+              >
+                &uarr;
+              </Button>
+              <Button
+                variant='ghost'
+                size='sm'
+                onClick={() => moveSlide(slide.id, 'down')}
+                disabled={index === slides.length - 1}
+              >
+                &darr;
+              </Button>
+              <Button
+                variant='destructive'
+                size='sm'
+                onClick={() => removeSlide(slide.id)}
+              >
+                &times;
+              </Button>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
+      </div>
 
-        <Separator className="mb-5" />
-
-        {/* Add slide form */}
-        <div>
-          <h3 className="text-lg font-semibold mb-3">Add Slide</h3>
-          <div className="flex gap-4 mb-4 flex-wrap">
-            <div className="flex flex-col gap-1.5">
+      {/* Add slide form */}
+      <Card className='mt-6'>
+        <CardHeader>
+          <CardTitle>Add Slide</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className='flex gap-4 mb-4 flex-wrap'>
+            <div className='flex flex-col gap-1.5'>
               <Label>Type</Label>
-              <Select value={slideType} onValueChange={(v) => v && setSlideType(v)}>
-                <SelectTrigger className="w-[200px]">
+              <Select
+                value={slideType}
+                onValueChange={(v) => v && setSlideType(v)}
+              >
+                <SelectTrigger className='w-[200px]'>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="welcome">Welcome</SelectItem>
-                  <SelectItem value="psalm">Psalm</SelectItem>
-                  <SelectItem value="scripture">Scripture Reading</SelectItem>
-                  <SelectItem value="private_prayer">Private Prayer</SelectItem>
-                  <SelectItem value="closing">Closing</SelectItem>
+                  <SelectItem value='welcome'>Welcome</SelectItem>
+                  <SelectItem value='psalm'>Psalm</SelectItem>
+                  <SelectItem value='scripture'>Scripture Reading</SelectItem>
+                  <SelectItem value='private_prayer'>Private Prayer</SelectItem>
+                  <SelectItem value='closing'>Closing</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
 
           {slideType === 'psalm' && (
-            <div className="flex gap-4 mb-4 flex-wrap items-end">
-              <div className="flex flex-col gap-1.5">
+            <div className='flex gap-4 mb-4 flex-wrap items-end'>
+              <div className='flex flex-col gap-1.5'>
                 <Label>Psalm #</Label>
                 <Input
-                  type="number"
+                  type='number'
                   min={1}
                   max={150}
                   value={psalmNumber}
                   onChange={(e) => setPsalmNumber(e.target.value)}
-                  placeholder="23"
-                  className="w-24"
+                  placeholder='23'
+                  className='w-24'
                 />
               </div>
-              <div className="flex flex-col gap-1.5">
-                <Label>From verse <span className="font-normal text-muted-foreground">(optional)</span></Label>
+              <div className='flex flex-col gap-1.5'>
+                <Label>
+                  From verse{' '}
+                  <span className='font-normal text-muted-foreground'>
+                    (optional)
+                  </span>
+                </Label>
                 <Input
-                  type="number"
+                  type='number'
                   min={1}
                   value={verseStart}
                   onChange={(e) => setVerseStart(e.target.value)}
-                  placeholder="whole psalm"
-                  className="w-28"
+                  placeholder='whole psalm'
+                  className='w-28'
                 />
               </div>
-              <div className="flex flex-col gap-1.5">
-                <Label>To verse <span className="font-normal text-muted-foreground">(optional)</span></Label>
+              <div className='flex flex-col gap-1.5'>
+                <Label>
+                  To verse{' '}
+                  <span className='font-normal text-muted-foreground'>
+                    (optional)
+                  </span>
+                </Label>
                 <Input
-                  type="number"
+                  type='number'
                   min={1}
                   value={verseEnd}
                   onChange={(e) => setVerseEnd(e.target.value)}
-                  placeholder="whole psalm"
-                  className="w-28"
+                  placeholder='whole psalm'
+                  className='w-28'
                 />
               </div>
-              <div className="flex flex-col gap-1.5">
+              <div className='flex flex-col gap-1.5'>
                 <Label>Version</Label>
-                <Select value={psalmVersion} onValueChange={(v) => v && setPsalmVersion(v)}>
+                <Select
+                  value={psalmVersion}
+                  onValueChange={(v) => v && setPsalmVersion(v)}
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="first">First</SelectItem>
-                    <SelectItem value="second">Second</SelectItem>
+                    <SelectItem value='first'>First</SelectItem>
+                    <SelectItem value='second'>Second</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -302,14 +316,14 @@ export default function SlideEditor({
           )}
 
           {(slideType === 'scripture' || slideType === 'key_verse') && (
-            <div className="flex gap-4 mb-4 flex-wrap">
-              <div className="flex flex-col gap-1.5 flex-1 min-w-[200px]">
+            <div className='flex gap-4 mb-4 flex-wrap'>
+              <div className='flex flex-col gap-1.5 flex-1 min-w-[200px]'>
                 <Label>Reference</Label>
                 <Input
-                  type="text"
+                  type='text'
                   value={scriptureRef}
                   onChange={(e) => setScriptureRef(e.target.value)}
-                  placeholder="e.g. Titus 2 or Titus 2:1"
+                  placeholder='e.g. Titus 2 or Titus 2:1'
                 />
               </div>
             </div>
@@ -318,8 +332,8 @@ export default function SlideEditor({
           <Button onClick={addSlide} disabled={loading}>
             {loading ? 'Fetching content...' : 'Add Slide'}
           </Button>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </>
   );
 }
