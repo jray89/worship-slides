@@ -62,8 +62,8 @@ module Api
     end
 
     def fetch_psalm_content(slide)
-      scraper = PsalmScraper.new
-      all_data = scraper.fetch(slide.psalm_number)
+      loader = PsalmLoader.new
+      all_data = loader.fetch(slide.psalm_number)
 
       version = slide.psalm_version || "first"
       stanzas = all_data[version] || all_data["first"] || []
