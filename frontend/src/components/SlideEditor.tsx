@@ -43,6 +43,7 @@ export default function SlideEditor({
   const [draggableId, setDraggableId] = useState<number | null>(null);
   const [dragId, setDragId] = useState<number | null>(null);
   const [overId, setOverId] = useState<number | null>(null);
+  const [dropBelow, setDropBelow] = useState(false);
 
   async function addSlide() {
     setLoading(true);
@@ -93,34 +94,44 @@ export default function SlideEditor({
     onSlidesChanged();
   }
 
-  // Returns the slide list reordered to reflect the in-progress drag, so the
-  // user sees a live preview of where the dragged slide will land.
-  function orderedSlides(): any[] {
-    if (dragId === null || overId === null || dragId === overId) return slides;
-    const from = slides.findIndex((s) => s.id === dragId);
-    const to = slides.findIndex((s) => s.id === overId);
-    if (from === -1 || to === -1) return slides;
-    const arr = [...slides];
-    const [moved] = arr.splice(from, 1);
-    arr.splice(to, 0, moved);
-    return arr;
+  // Update the drop indicator as the cursor moves over a row. The list DOM
+  // order is kept stable during the drag (only an indicator line moves), which
+  // avoids the flicker that comes from reordering the dragged node mid-drag.
+  function handleDragOver(e: React.DragEvent, slideId: number) {
+    if (dragId === null) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    const rect = e.currentTarget.getBoundingClientRect();
+    const below = e.clientY > rect.top + rect.height / 2;
+    if (slideId !== overId || below !== dropBelow) {
+      setOverId(slideId);
+      setDropBelow(below);
+    }
   }
 
   function clearDrag() {
     setDraggableId(null);
     setDragId(null);
     setOverId(null);
+    setDropBelow(false);
   }
 
   async function handleDrop() {
-    if (dragId !== null && overId !== null && dragId !== overId) {
-      const newIndex = orderedSlides().findIndex((s) => s.id === dragId);
-      const slideId = dragId;
+    if (dragId === null || overId === null) {
       clearDrag();
-      // acts_as_list positions are 1-based
-      await reorderSlide(slideId, newIndex + 1);
-    } else {
-      clearDrag();
+      return;
+    }
+    // Build the target order: drop the dragged slide before/after the hovered
+    // row depending on which half of it the cursor is in.
+    const rest = slides.filter((s) => s.id !== dragId);
+    const overIdx = rest.findIndex((s) => s.id === overId);
+    const insertIdx = overIdx + (dropBelow ? 1 : 0);
+    const fromIdx = slides.findIndex((s) => s.id === dragId);
+    const slideId = dragId;
+    clearDrag();
+    // acts_as_list positions are 1-based. Skip the call if nothing moved.
+    if (insertIdx !== fromIdx) {
+      await reorderSlide(slideId, insertIdx + 1);
     }
   }
 
@@ -222,7 +233,7 @@ export default function SlideEditor({
         <h3 className='text-lg font-semibold mb-3'>
           Slides ({slides.reduce((acc, s) => acc + slidePageCount(s), 0)} pages)
         </h3>
-        {orderedSlides().map((slide, index) => (
+        {slides.map((slide, index) => (
           <div
             key={slide.id}
             draggable={draggableId === slide.id}
@@ -230,12 +241,7 @@ export default function SlideEditor({
               setDragId(slide.id);
               e.dataTransfer.effectAllowed = 'move';
             }}
-            onDragEnter={() => {
-              if (dragId !== null) setOverId(slide.id);
-            }}
-            onDragOver={(e) => {
-              if (dragId !== null) e.preventDefault();
-            }}
+            onDragOver={(e) => handleDragOver(e, slide.id)}
             onDrop={(e) => {
               e.preventDefault();
               handleDrop();
@@ -243,6 +249,12 @@ export default function SlideEditor({
             onDragEnd={clearDrag}
             className={`flex items-center gap-3 p-2.5 border border-border rounded-lg mb-1 ${
               dragId === slide.id ? 'opacity-50' : ''
+            } ${
+              overId === slide.id && dragId !== slide.id
+                ? dropBelow
+                  ? 'border-b-2 border-b-primary'
+                  : 'border-t-2 border-t-primary'
+                : ''
             }`}
           >
             <span className='font-bold text-muted-foreground w-8'>
