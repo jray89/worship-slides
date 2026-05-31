@@ -247,13 +247,13 @@ export default function SlideEditor({
               handleDrop();
             }}
             onDragEnd={clearDrag}
-            className={`flex items-center gap-3 p-2.5 border border-border rounded-lg mb-1 ${
+            className={`relative flex items-center gap-3 p-2.5 border border-border rounded-lg mb-1 ${
               dragId === slide.id ? 'opacity-50' : ''
             } ${
               overId === slide.id && dragId !== slide.id
                 ? dropBelow
-                  ? 'border-b-2 border-b-primary'
-                  : 'border-t-2 border-t-primary'
+                  ? "after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-1 after:border-b-2 after:border-b-primary after:pointer-events-none"
+                  : "before:content-[''] before:absolute before:left-0 before:right-0 before:-top-1 before:border-t-2 before:border-t-primary before:pointer-events-none"
                 : ''
             }`}
           >
