@@ -108,19 +108,20 @@ export default function SlideEditor({
   function slideDescription(slide: any): string {
     switch (slide.slide_type) {
       case 'welcome':
-        return 'Welcome Slide';
+        return 'Welcome';
       case 'closing':
-        return 'Closing Slide';
+        return 'Closing';
       case 'psalm': {
         const ref = slide.verse_start
           ? `${slide.psalm_number}:${slide.verse_start}-${slide.verse_end}`
           : `${slide.psalm_number}`;
-        return `Psalm ${ref} (${slide.psalm_version})`;
+        const versionName = slide.psalm_version === 'first' ? '' : ' (2nd)';
+        return `Psalm ${ref}${versionName}`;
       }
       case 'private_prayer':
         return 'Private Prayer';
       case 'scripture':
-        return `Scripture: ${slide.scripture_reference}`;
+        return `${slide.scripture_reference}`;
       case 'key_verse':
         return `Key Verse: ${slide.scripture_reference}`;
       default:
