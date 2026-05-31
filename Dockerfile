@@ -7,7 +7,15 @@ FROM docker.io/library/ruby:$RUBY_VERSION-slim AS base
 WORKDIR /rails
 
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y curl libjemalloc2 libvips libpq5 && \
+    apt-get install --no-install-recommends -y \
+      curl libjemalloc2 libvips libpq5 \
+      chromium \
+      fonts-liberation fonts-noto-color-emoji fonts-noto-cjk \
+      libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libxkbcommon0 \
+      libxcomposite1 libxdamage1 libxfixes3 libxrandr2 libgbm1 libpango-1.0-0 \
+      libcairo2 libasound2 libxshmfence1 && \
+    curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
+    apt-get install -y nodejs && \
     ln -s /usr/lib/$(uname -m)-linux-gnu/libjemalloc.so.2 /usr/local/lib/libjemalloc.so && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
@@ -15,15 +23,15 @@ ENV RAILS_ENV="production" \
     BUNDLE_DEPLOYMENT="1" \
     BUNDLE_PATH="/usr/local/bundle" \
     BUNDLE_WITHOUT="development:test" \
-    LD_PRELOAD="/usr/local/lib/libjemalloc.so"
+    LD_PRELOAD="/usr/local/lib/libjemalloc.so" \
+    PUPPETEER_SKIP_DOWNLOAD="true" \
+    PUPPETEER_EXECUTABLE_PATH="/usr/bin/chromium"
 
 # Build stage
 FROM base AS build
 
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential git libvips libyaml-dev libpq-dev pkg-config && \
-    curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
-    apt-get install -y nodejs && \
     npm install -g pnpm@9 && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
@@ -34,11 +42,17 @@ RUN bundle install && \
     rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
     bundle exec bootsnap precompile -j 1 --gemfile
 
+# Install backend node deps (puppeteer for Grover). Skip Chromium download —
+# we use the system chromium installed in the base stage.
+COPY backend/package.json backend/pnpm-lock.yaml ./
+RUN pnpm install --prod --frozen-lockfile
+
 # Build frontend
 COPY frontend/ /frontend/
 RUN cd /frontend && pnpm install && pnpm run build
 
-# Copy backend code
+# Copy backend code (node_modules is excluded via .dockerignore so the
+# install above is preserved)
 COPY backend/ .
 
 # Copy frontend build output into Rails public/
