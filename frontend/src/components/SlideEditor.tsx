@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { GripVertical } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -38,6 +39,11 @@ export default function SlideEditor({
   const [sermonReference, setSermonReference] = useState(
     service.sermon_reference || '',
   );
+  // Drag-and-drop reordering state
+  const [draggableId, setDraggableId] = useState<number | null>(null);
+  const [dragId, setDragId] = useState<number | null>(null);
+  const [overId, setOverId] = useState<number | null>(null);
+  const [dropBelow, setDropBelow] = useState(false);
 
   async function addSlide() {
     setLoading(true);
@@ -79,13 +85,54 @@ export default function SlideEditor({
     onSlidesChanged();
   }
 
-  async function moveSlide(slideId: number, direction: 'up' | 'down') {
+  async function reorderSlide(slideId: number, position: number) {
     await apiFetch(`/services/${service.id}/slides/${slideId}/move`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ direction }),
+      body: JSON.stringify({ position }),
     });
     onSlidesChanged();
+  }
+
+  // Update the drop indicator as the cursor moves over a row. The list DOM
+  // order is kept stable during the drag (only an indicator line moves), which
+  // avoids the flicker that comes from reordering the dragged node mid-drag.
+  function handleDragOver(e: React.DragEvent, slideId: number) {
+    if (dragId === null) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    const rect = e.currentTarget.getBoundingClientRect();
+    const below = e.clientY > rect.top + rect.height / 2;
+    if (slideId !== overId || below !== dropBelow) {
+      setOverId(slideId);
+      setDropBelow(below);
+    }
+  }
+
+  function clearDrag() {
+    setDraggableId(null);
+    setDragId(null);
+    setOverId(null);
+    setDropBelow(false);
+  }
+
+  async function handleDrop() {
+    if (dragId === null || overId === null) {
+      clearDrag();
+      return;
+    }
+    // Build the target order: drop the dragged slide before/after the hovered
+    // row depending on which half of it the cursor is in.
+    const rest = slides.filter((s) => s.id !== dragId);
+    const overIdx = rest.findIndex((s) => s.id === overId);
+    const insertIdx = overIdx + (dropBelow ? 1 : 0);
+    const fromIdx = slides.findIndex((s) => s.id === dragId);
+    const slideId = dragId;
+    clearDrag();
+    // acts_as_list positions are 1-based. Skip the call if nothing moved.
+    if (insertIdx !== fromIdx) {
+      await reorderSlide(slideId, insertIdx + 1);
+    }
   }
 
   async function updateService() {
@@ -189,7 +236,26 @@ export default function SlideEditor({
         {slides.map((slide, index) => (
           <div
             key={slide.id}
-            className='flex items-center gap-3 p-2.5 border border-border rounded-lg mb-1'
+            draggable={draggableId === slide.id}
+            onDragStart={(e) => {
+              setDragId(slide.id);
+              e.dataTransfer.effectAllowed = 'move';
+            }}
+            onDragOver={(e) => handleDragOver(e, slide.id)}
+            onDrop={(e) => {
+              e.preventDefault();
+              handleDrop();
+            }}
+            onDragEnd={clearDrag}
+            className={`relative flex items-center gap-3 p-2.5 border border-border rounded-lg mb-1 ${
+              dragId === slide.id ? 'opacity-50' : ''
+            } ${
+              overId === slide.id && dragId !== slide.id
+                ? dropBelow
+                  ? "after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-1 after:border-b-2 after:border-b-primary after:pointer-events-none"
+                  : "before:content-[''] before:absolute before:left-0 before:right-0 before:-top-1 before:border-t-2 before:border-t-primary before:pointer-events-none"
+                : ''
+            }`}
           >
             <span className='font-bold text-muted-foreground w-8'>
               {index + 1}.
@@ -198,27 +264,21 @@ export default function SlideEditor({
             <Badge variant='outline'>{slidePageCount(slide)} pages</Badge>
             <div className='flex gap-1'>
               <Button
-                variant='ghost'
-                size='sm'
-                onClick={() => moveSlide(slide.id, 'up')}
-                disabled={index === 0}
-              >
-                &uarr;
-              </Button>
-              <Button
-                variant='ghost'
-                size='sm'
-                onClick={() => moveSlide(slide.id, 'down')}
-                disabled={index === slides.length - 1}
-              >
-                &darr;
-              </Button>
-              <Button
                 variant='destructive'
                 size='sm'
                 onClick={() => removeSlide(slide.id)}
               >
                 &times;
+              </Button>
+              <Button
+                variant='ghost'
+                size='sm'
+                aria-label='Drag to reorder'
+                className='cursor-grab touch-none active:cursor-grabbing'
+                onPointerDown={() => setDraggableId(slide.id)}
+                onPointerUp={() => setDraggableId(null)}
+              >
+                <GripVertical />
               </Button>
             </div>
           </div>

@@ -40,7 +40,9 @@ module Api
 
     def move
       slide = service.slides.find(params[:id])
-      if params[:direction] == "up"
+      if params[:position].present?
+        slide.insert_at(params[:position].to_i)
+      elsif params[:direction] == "up"
         slide.move_higher
       else
         slide.move_lower
