@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { GripVertical } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -38,6 +39,10 @@ export default function SlideEditor({
   const [sermonReference, setSermonReference] = useState(
     service.sermon_reference || '',
   );
+  // Drag-and-drop reordering state
+  const [draggableId, setDraggableId] = useState<number | null>(null);
+  const [dragId, setDragId] = useState<number | null>(null);
+  const [overId, setOverId] = useState<number | null>(null);
 
   async function addSlide() {
     setLoading(true);
@@ -79,13 +84,44 @@ export default function SlideEditor({
     onSlidesChanged();
   }
 
-  async function moveSlide(slideId: number, direction: 'up' | 'down') {
+  async function reorderSlide(slideId: number, position: number) {
     await apiFetch(`/services/${service.id}/slides/${slideId}/move`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ direction }),
+      body: JSON.stringify({ position }),
     });
     onSlidesChanged();
+  }
+
+  // Returns the slide list reordered to reflect the in-progress drag, so the
+  // user sees a live preview of where the dragged slide will land.
+  function orderedSlides(): any[] {
+    if (dragId === null || overId === null || dragId === overId) return slides;
+    const from = slides.findIndex((s) => s.id === dragId);
+    const to = slides.findIndex((s) => s.id === overId);
+    if (from === -1 || to === -1) return slides;
+    const arr = [...slides];
+    const [moved] = arr.splice(from, 1);
+    arr.splice(to, 0, moved);
+    return arr;
+  }
+
+  function clearDrag() {
+    setDraggableId(null);
+    setDragId(null);
+    setOverId(null);
+  }
+
+  async function handleDrop() {
+    if (dragId !== null && overId !== null && dragId !== overId) {
+      const newIndex = orderedSlides().findIndex((s) => s.id === dragId);
+      const slideId = dragId;
+      clearDrag();
+      // acts_as_list positions are 1-based
+      await reorderSlide(slideId, newIndex + 1);
+    } else {
+      clearDrag();
+    }
   }
 
   async function updateService() {
@@ -186,10 +222,28 @@ export default function SlideEditor({
         <h3 className='text-lg font-semibold mb-3'>
           Slides ({slides.reduce((acc, s) => acc + slidePageCount(s), 0)} pages)
         </h3>
-        {slides.map((slide, index) => (
+        {orderedSlides().map((slide, index) => (
           <div
             key={slide.id}
-            className='flex items-center gap-3 p-2.5 border border-border rounded-lg mb-1'
+            draggable={draggableId === slide.id}
+            onDragStart={(e) => {
+              setDragId(slide.id);
+              e.dataTransfer.effectAllowed = 'move';
+            }}
+            onDragEnter={() => {
+              if (dragId !== null) setOverId(slide.id);
+            }}
+            onDragOver={(e) => {
+              if (dragId !== null) e.preventDefault();
+            }}
+            onDrop={(e) => {
+              e.preventDefault();
+              handleDrop();
+            }}
+            onDragEnd={clearDrag}
+            className={`flex items-center gap-3 p-2.5 border border-border rounded-lg mb-1 ${
+              dragId === slide.id ? 'opacity-50' : ''
+            }`}
           >
             <span className='font-bold text-muted-foreground w-8'>
               {index + 1}.
@@ -198,27 +252,21 @@ export default function SlideEditor({
             <Badge variant='outline'>{slidePageCount(slide)} pages</Badge>
             <div className='flex gap-1'>
               <Button
-                variant='ghost'
-                size='sm'
-                onClick={() => moveSlide(slide.id, 'up')}
-                disabled={index === 0}
-              >
-                &uarr;
-              </Button>
-              <Button
-                variant='ghost'
-                size='sm'
-                onClick={() => moveSlide(slide.id, 'down')}
-                disabled={index === slides.length - 1}
-              >
-                &darr;
-              </Button>
-              <Button
                 variant='destructive'
                 size='sm'
                 onClick={() => removeSlide(slide.id)}
               >
                 &times;
+              </Button>
+              <Button
+                variant='ghost'
+                size='sm'
+                aria-label='Drag to reorder'
+                className='cursor-grab touch-none active:cursor-grabbing'
+                onPointerDown={() => setDraggableId(slide.id)}
+                onPointerUp={() => setDraggableId(null)}
+              >
+                <GripVertical />
               </Button>
             </div>
           </div>
