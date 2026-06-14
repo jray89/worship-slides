@@ -1,7 +1,7 @@
 import SlideBase, { SlideLogoCorner } from './SlideBase';
 import { SlideHeader } from '../ui/SlideHeader';
 
-const FONT = 'arial, sans-serif';
+const FONT = 'Inter, sans-serif';
 
 interface ScriptureSlideProps {
   reference: string;
@@ -25,6 +25,7 @@ export default function ScriptureSlide({
           lineHeight: '1.7',
           textAlign: 'left',
           fontFamily: FONT,
+          fontWeight: '300',
         }}
       >
         {lines.map((line, i) => (

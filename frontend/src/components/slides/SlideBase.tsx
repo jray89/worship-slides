@@ -17,7 +17,7 @@ export default function SlideBase({
         height: '1080px',
         backgroundColor: '#0e0e0e',
         color: '#fff',
-        fontFamily: '"EB Garamond", serif',
+        fontFamily: '"Crimson Text", serif',
         position: 'relative',
         overflow: 'hidden',
         boxSizing: 'border-box',
