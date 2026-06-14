@@ -40,6 +40,7 @@ export default function PsalmSlide({ reference, stanza }: PsalmSlideProps) {
               style={{
                 fontFamily: 'Inter, sans-serif',
                 fontSize: '44pt',
+                fontWeight: '300',
                 lineHeight: '1',
                 margin: '0',
                 textAlign: 'center',

@@ -21,10 +21,11 @@ export default function ScriptureSlide({
       <div
         style={{
           padding: '0 100px 80px 200px',
-          fontSize: '36pt',
+          fontSize: '34pt',
           lineHeight: '1.7',
           textAlign: 'left',
           fontFamily: FONT,
+          fontWeight: '300',
         }}
       >
         {lines.map((line, i) => (

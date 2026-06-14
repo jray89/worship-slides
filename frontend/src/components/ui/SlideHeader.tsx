@@ -3,7 +3,7 @@ export function SlideHeader({ children }: { children: React.ReactNode }) {
     <h1
       style={{
         textAlign: 'center',
-        fontSize: '72pt',
+        fontSize: '84pt',
         fontWeight: 'normal',
         marginTop: '75px',
         marginBottom: '25px',
