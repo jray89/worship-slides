@@ -11,6 +11,7 @@
     "@base-ui/react": "^1.4.1",
     "@fontsource-variable/geist": "^5.2.8",
     "@fontsource-variable/inter": "^5.2.8",
+    "@fontsource/crimson-text": "^5.2.7",
     "@fontsource/eb-garamond": "^5.2.7",
     "@tailwindcss/vite": "^4.2.4",
     "@types/react": "^19.2.14",
