@@ -16,7 +16,7 @@ export default function TitleCard({
         width: '1920px',
         height: '1080px',
         position: 'relative',
-        fontFamily: '"Times New Roman", serif',
+        fontFamily: '"EB Garamond", serif',
         backgroundColor: 'transparent',
       }}
     >
