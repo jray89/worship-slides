@@ -51,8 +51,12 @@ module Api
         wait_for_selector: "#print-ready"
       ).to_pdf
 
+      filename = "#{service.service_date}-slides"
+      filename += "-#{service.label.downcase}" if service.label.present?
+      filename += ".pdf"
+
       send_data pdf,
-        filename: "#{service.service_date}-slides.pdf",
+        filename: filename,
         type: "application/pdf",
         disposition: "attachment"
     end
