@@ -21,7 +21,7 @@ export default function ScriptureSlide({
       <div
         style={{
           padding: '0 100px 80px 200px',
-          fontSize: '34pt',
+          fontSize: '36pt',
           lineHeight: '1.7',
           textAlign: 'left',
           fontFamily: FONT,
