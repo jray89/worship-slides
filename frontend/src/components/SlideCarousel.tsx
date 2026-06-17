@@ -5,6 +5,7 @@ import ScriptureSlide from './slides/ScriptureSlide';
 import KeyVerseSlide from './slides/KeyVerseSlide';
 import ClosingSlide from './slides/ClosingSlide';
 import PrivatePrayerSlide from './slides/PrivatePrayerSlide';
+import BlankSlide from './slides/BlankSlide';
 import { Button } from '@/components/ui/button';
 
 interface RenderedPage {
@@ -47,6 +48,8 @@ export default function SlideCarousel({ pages }: { pages: RenderedPage[] }) {
         return <ClosingSlide />;
       case 'private_prayer':
         return <PrivatePrayerSlide />;
+      case 'blank':
+        return <BlankSlide />;
       case 'psalm':
         return (
           <PsalmSlide

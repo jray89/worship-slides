@@ -6,6 +6,7 @@ import PrivatePrayerSlide from './slides/PrivatePrayerSlide';
 import PsalmSlide from './slides/PsalmSlide';
 import KeyVerseSlide from './slides/KeyVerseSlide';
 import ScriptureSlide from './slides/ScriptureSlide';
+import BlankSlide from './slides/BlankSlide';
 
 interface RenderedPage {
   slide_type: string;
@@ -17,6 +18,7 @@ function renderPage(p: RenderedPage) {
     case 'welcome':   return <WelcomeSlide />;
     case 'closing':        return <ClosingSlide />;
     case 'private_prayer': return <PrivatePrayerSlide />;
+    case 'blank':          return <BlankSlide />;
     case 'psalm':     return <PsalmSlide reference={p.content.reference} stanza={p.content.stanza} />;
     case 'scripture': return <ScriptureSlide reference={p.content.reference} text={p.content.text} />;
     case 'key_verse': return <KeyVerseSlide reference={p.content.reference} text={p.content.text} />;

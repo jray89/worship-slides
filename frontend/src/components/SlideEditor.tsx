@@ -158,6 +158,8 @@ export default function SlideEditor({
         return 'Welcome';
       case 'closing':
         return 'Closing';
+      case 'blank':
+        return 'Blank';
       case 'psalm': {
         const ref = slide.verse_start
           ? `${slide.psalm_number}:${slide.verse_start}-${slide.verse_end}`
@@ -307,6 +309,7 @@ export default function SlideEditor({
                   <SelectItem value='scripture'>Scripture Reading</SelectItem>
                   <SelectItem value='private_prayer'>Private Prayer</SelectItem>
                   <SelectItem value='closing'>Closing</SelectItem>
+                  <SelectItem value='blank'>Blank</SelectItem>
                 </SelectContent>
               </Select>
             </div>
