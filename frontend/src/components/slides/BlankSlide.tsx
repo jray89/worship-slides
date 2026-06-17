@@ -1,5 +1,5 @@
 import LogoSlide from './LogoSlide';
 
 export default function BlankSlide() {
-  return <LogoSlide />;
+  return <LogoSlide includeAddress={false} />;
 }
