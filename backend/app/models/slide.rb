@@ -3,7 +3,7 @@ class Slide < ApplicationRecord
   acts_as_list scope: :service
 
   validates :slide_type, presence: true, inclusion: {
-    in: %w[welcome psalm scripture key_verse private_prayer closing]
+    in: %w[welcome psalm scripture key_verse private_prayer closing blank]
   }
 
   validates :psalm_number, presence: true, if: -> { slide_type == "psalm" }
