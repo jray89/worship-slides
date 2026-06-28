@@ -15,6 +15,10 @@ class ScriptureScraper
     passage.css(".footnote, .footnotes, .crossreference, .crossrefs, .full-chap-link, .passage-other-trans, .publisher-info-bottom").each(&:remove)
     passage.css("h3, h4").each(&:remove)  # Section headings
     passage.css("sup.crossreference, sup.footnote").each(&:remove)
+    # KJV/AKJV epistle subscriptions ("Written to the Romans from Corinthus...") —
+    # an indented div rendered after the final verse. :last-child guards against
+    # a future reuse of the class mid-chapter dropping real content.
+    passage.css("div.left-1.top-1:last-child").each(&:remove)
 
     verses = []
     paragraphs = []
