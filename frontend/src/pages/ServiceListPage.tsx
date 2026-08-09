@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import ServiceForm from '@/components/ServiceForm';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Trash2 } from 'lucide-react';
-import { apiFetch } from '@/lib/api';
+import { FileDown, ImageDown, Trash2 } from 'lucide-react';
+import { apiFetch, getToken } from '@/lib/api';
 
 interface Service {
   id: number;
@@ -17,6 +17,8 @@ interface Service {
 export default function ServiceListPage() {
   const [services, setServices] = useState<Service[]>([]);
   const navigate = useNavigate();
+  const token = getToken();
+  const tokenQuery = token ? `?token=${encodeURIComponent(token)}` : '';
 
   useEffect(() => {
     fetchServices();
@@ -66,9 +68,35 @@ export default function ServiceListPage() {
                 </span>
               )}
             </div>
-            <span className='ml-auto'>
+            <span className='ml-auto flex gap-2'>
+              <Button
+                variant='outline'
+                aria-label='Download slides'
+                title='Download slides'
+                onClick={(e) => e.stopPropagation()}
+                render={
+                  <a href={`/api/services/${s.id}/export_pdf${tokenQuery}`} />
+                }
+              >
+                <FileDown className='h-4 w-4' />
+              </Button>
+              <Button
+                variant='outline'
+                aria-label='Download title card'
+                title='Download title card'
+                onClick={(e) => e.stopPropagation()}
+                render={
+                  <a
+                    href={`/api/services/${s.id}/export_title_card${tokenQuery}`}
+                  />
+                }
+              >
+                <ImageDown className='h-4 w-4' />
+              </Button>
               <Button
                 variant='destructive'
+                aria-label='Delete service'
+                title='Delete service'
                 onClick={(e) => deleteService(e, s.id)}
               >
                 <Trash2 className='h-4 w-4' />
