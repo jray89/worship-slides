@@ -272,13 +272,17 @@ export default function SlideEditor({
               >
                 &times;
               </Button>
-              {/* Touch devices can't use HTML5 drag-and-drop, so mobile gets
-                  arrow buttons instead of the drag handle. */}
+              {/* HTML5 drag-and-drop needs a mouse or trackpad, so the handle
+                  is swapped for arrow buttons on touch-only devices. Keyed off
+                  the primary pointer rather than width: an iPad is wider than
+                  the md breakpoint but still can't drag. `pointer` (not
+                  `any-pointer`) so a paired Apple Pencil doesn't count as a
+                  fine pointer; attaching a trackpad does flip it to fine. */}
               <Button
                 variant='ghost'
                 size='sm'
                 aria-label='Move up'
-                className='md:hidden'
+                className='pointer-fine:hidden'
                 disabled={index === 0}
                 onClick={() => reorderSlide(slide.id, index)}
               >
@@ -288,7 +292,7 @@ export default function SlideEditor({
                 variant='ghost'
                 size='sm'
                 aria-label='Move down'
-                className='md:hidden'
+                className='pointer-fine:hidden'
                 disabled={index === slides.length - 1}
                 onClick={() => reorderSlide(slide.id, index + 2)}
               >
@@ -298,7 +302,7 @@ export default function SlideEditor({
                 variant='ghost'
                 size='sm'
                 aria-label='Drag to reorder'
-                className='hidden cursor-grab touch-none active:cursor-grabbing md:inline-flex'
+                className='hidden cursor-grab touch-none active:cursor-grabbing pointer-fine:inline-flex'
                 onPointerDown={() => setDraggableId(slide.id)}
                 onPointerUp={() => setDraggableId(null)}
               >
