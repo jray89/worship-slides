@@ -272,12 +272,6 @@ export default function SlideEditor({
               >
                 &times;
               </Button>
-              {/* HTML5 drag-and-drop needs a mouse or trackpad, so the handle
-                  is swapped for arrow buttons on touch-only devices. Keyed off
-                  the primary pointer rather than width: an iPad is wider than
-                  the md breakpoint but still can't drag. `pointer` (not
-                  `any-pointer`) so a paired Apple Pencil doesn't count as a
-                  fine pointer; attaching a trackpad does flip it to fine. */}
               <Button
                 variant='ghost'
                 size='sm'
