@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { GripVertical } from 'lucide-react';
+import { ChevronDown, ChevronUp, GripVertical } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -272,11 +272,33 @@ export default function SlideEditor({
               >
                 &times;
               </Button>
+              {/* Touch devices can't use HTML5 drag-and-drop, so mobile gets
+                  arrow buttons instead of the drag handle. */}
+              <Button
+                variant='ghost'
+                size='sm'
+                aria-label='Move up'
+                className='md:hidden'
+                disabled={index === 0}
+                onClick={() => reorderSlide(slide.id, index)}
+              >
+                <ChevronUp />
+              </Button>
+              <Button
+                variant='ghost'
+                size='sm'
+                aria-label='Move down'
+                className='md:hidden'
+                disabled={index === slides.length - 1}
+                onClick={() => reorderSlide(slide.id, index + 2)}
+              >
+                <ChevronDown />
+              </Button>
               <Button
                 variant='ghost'
                 size='sm'
                 aria-label='Drag to reorder'
-                className='cursor-grab touch-none active:cursor-grabbing'
+                className='hidden cursor-grab touch-none active:cursor-grabbing md:inline-flex'
                 onPointerDown={() => setDraggableId(slide.id)}
                 onPointerUp={() => setDraggableId(null)}
               >
