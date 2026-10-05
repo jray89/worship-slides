@@ -3,6 +3,8 @@ require "nokogiri"
 require "cgi"
 
 class ScriptureScraper
+  include ScriptureReference
+
   def fetch(reference)
     encoded = CGI.escape(reference)
     url = "https://www.biblegateway.com/passage/?search=#{encoded}&version=AKJV"
@@ -66,22 +68,5 @@ class ScriptureScraper
       "full_text" => verses.map { |v| v["text"] }.join(" "),
       "display_reference" => build_display_reference(parsed)
     }
-  end
-
-  private
-
-  def parse_reference(reference)
-    # Handle references like "Titus 2", "Titus 2:1", "1 John 3:16-17", "Numbers 14:1-10"
-    if reference.match(/\A(.+?)\s+(\d+)(?::(.+))?\z/)
-      { book: $1, chapter: $2.to_i, verse_spec: $3 }
-    else
-      { book: reference, chapter: nil, verse_spec: nil }
-    end
-  end
-
-  def build_display_reference(parsed)
-    ref = "#{parsed[:book]} #{parsed[:chapter]}"
-    ref += ":#{parsed[:verse_spec]}" if parsed[:verse_spec]
-    ref
   end
 end

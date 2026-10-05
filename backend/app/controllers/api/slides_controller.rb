@@ -105,8 +105,8 @@ module Api
     end
 
     def fetch_scripture_content(slide)
-      scraper = ScriptureScraper.new
-      data = scraper.fetch(slide.scripture_reference)
+      client = ScriptureApiClient.new
+      data = client.fetch(slide.scripture_reference)
 
       # For scripture reading, pre-paginate the text
       if slide.slide_type == "scripture"
