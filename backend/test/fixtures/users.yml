@@ -1,0 +1,5 @@
+jay:
+  first_name: Jay
+  last_name: Example
+  email: jay@example.com
+  password_digest: <%= BCrypt::Password.create("correct-horse", cost: BCrypt::Engine::MIN_COST) %>
