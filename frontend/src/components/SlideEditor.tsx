@@ -13,12 +13,23 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { apiFetch } from '@/lib/api';
+import type { Service, Slide } from '@/lib/types';
+import { slideDescription, slidePageCount } from '@/lib/slides';
+
+interface SlidePayload {
+  slide_type: string;
+  psalm_number?: number;
+  verse_start?: number;
+  verse_end?: number;
+  psalm_version?: string;
+  scripture_reference?: string;
+}
 
 interface SlideEditorProps {
-  service: any;
-  slides: any[];
+  service: Service;
+  slides: Slide[];
   onSlidesChanged: () => void;
-  onServiceUpdated: (service: any) => void;
+  onServiceUpdated: (service: Service) => void;
 }
 
 export default function SlideEditor({
@@ -48,7 +59,7 @@ export default function SlideEditor({
   async function addSlide() {
     setLoading(true);
     try {
-      const body: any = { slide: { slide_type: slideType } };
+      const body: { slide: SlidePayload } = { slide: { slide_type: slideType } };
       if (slideType === 'psalm') {
         body.slide.psalm_number = parseInt(psalmNumber);
         body.slide.verse_start = parseInt(verseStart);
@@ -150,41 +161,6 @@ export default function SlideEditor({
       onServiceUpdated(await res.json());
       setEditingService(false);
     }
-  }
-
-  function slideDescription(slide: any): string {
-    switch (slide.slide_type) {
-      case 'welcome':
-        return 'Welcome';
-      case 'closing':
-        return 'Closing';
-      case 'blank':
-        return 'Blank';
-      case 'psalm': {
-        const ref = slide.verse_start
-          ? `${slide.psalm_number}:${slide.verse_start}-${slide.verse_end}`
-          : `${slide.psalm_number}`;
-        const versionName = slide.psalm_version === 'first' ? '' : ' (2nd)';
-        return `Psalm ${ref}${versionName}`;
-      }
-      case 'private_prayer':
-        return 'Private Prayer';
-      case 'scripture':
-        return `${slide.scripture_reference}`;
-      case 'key_verse':
-        return `Key Verse: ${slide.scripture_reference}`;
-      default:
-        return slide.slide_type;
-    }
-  }
-
-  function slidePageCount(slide: any): number {
-    if (!slide.content_data) return 1;
-    if (slide.slide_type === 'psalm')
-      return slide.content_data.stanzas?.length || 0;
-    if (slide.slide_type === 'scripture')
-      return slide.content_data.pages?.length || 0;
-    return 1;
   }
 
   return (

@@ -8,6 +8,6 @@ Grover.configure do |config|
     prefer_css_page_size: true,
     print_background: true,
     wait_until: "networkidle0",
-    launch_args: Rails.env.production? ? ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"] : []
+    launch_args: Rails.env.production? ? [ "--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage" ] : []
   }
 end

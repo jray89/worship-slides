@@ -1,0 +1,58 @@
+name: CI
+
+# Checks only. Deploys happen on Railway.
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          working-directory: backend
+          bundler-cache: true
+
+      - name: Lint
+        run: bin/rubocop -f github
+
+      - name: Brakeman
+        run: bin/brakeman --quiet --no-pager --exit-on-warn --exit-on-error
+
+      - name: Gem audit
+        run: bin/bundler-audit check --update
+
+      - name: Tests
+        env:
+          RAILS_ENV: test
+        run: bin/rails db:test:prepare test
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: pnpm/action-setup@v4
+        with:
+          package_json_file: frontend/package.json
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm test
+      - run: pnpm build

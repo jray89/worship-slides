@@ -14,3 +14,11 @@ module ActiveSupport
     # Add more helper methods to be used by all tests here...
   end
 end
+
+module ActionDispatch
+  class IntegrationTest
+    def auth_headers(user = users(:jay))
+      { "Authorization" => "Bearer #{JwtService.encode({ user_id: user.id })}" }
+    end
+  end
+end

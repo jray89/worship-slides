@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import WelcomeSlide from './slides/WelcomeSlide';
 import ClosingSlide from './slides/ClosingSlide';
@@ -7,11 +7,7 @@ import PsalmSlide from './slides/PsalmSlide';
 import KeyVerseSlide from './slides/KeyVerseSlide';
 import ScriptureSlide from './slides/ScriptureSlide';
 import BlankSlide from './slides/BlankSlide';
-
-interface RenderedPage {
-  slide_type: string;
-  content: any;
-}
+import type { RenderedPage } from '@/lib/types';
 
 function renderPage(p: RenderedPage) {
   switch (p.slide_type) {
@@ -30,16 +26,13 @@ export default function PrintSlidesView() {
   const { id } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
-  const [pages, setPages] = useState<RenderedPage[]>([]);
-  const [loaded, setLoaded] = useState(false);
+  // During PDF export the backend embeds the pages, so no fetch is needed.
+  const embeddedPages = window.__PRINT_DATA__?.pages;
+  const [pages, setPages] = useState<RenderedPage[]>(embeddedPages ?? []);
+  const [loaded, setLoaded] = useState(embeddedPages !== undefined);
 
   useEffect(() => {
-    const embedded = (window as any).__PRINT_DATA__;
-    if (embedded) {
-      setPages(embedded.pages);
-      setLoaded(true);
-      return;
-    }
+    if (window.__PRINT_DATA__?.pages) return;
     const headers: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {};
     fetch(`/api/services/${id}/preview_data`, { headers })
       .then((r) => r.json())

@@ -5,14 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { FileDown, ImageDown, Trash2 } from 'lucide-react';
 import { apiFetch, getToken } from '@/lib/api';
-
-interface Service {
-  id: number;
-  service_date: string;
-  label: string;
-  sermon_title: string;
-  sermon_reference: string;
-}
+import type { Service } from '@/lib/types';
 
 export default function ServiceListPage() {
   const [services, setServices] = useState<Service[]>([]);

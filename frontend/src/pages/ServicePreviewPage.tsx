@@ -1,36 +1,24 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import SlideCarousel from '@/components/SlideCarousel'
 import TitleCardPreview from '@/components/TitleCardPreview'
 import { apiFetch } from '@/lib/api'
-
-interface RenderedPage {
-  slide_type: string
-  content: any
-}
+import type { RenderedPage, Service } from '@/lib/types'
 
 export default function ServicePreviewPage() {
   const { id } = useParams<{ id: string }>()
-  const [service, setService] = useState<any>(null)
+  const [service, setService] = useState<Service | null>(null)
   const [pages, setPages] = useState<RenderedPage[]>([])
 
   useEffect(() => {
-    if (id) {
-      fetchService(id)
-      fetchPreview(id)
-    }
+    if (!id) return
+    apiFetch(`/services/${id}`)
+      .then((res) => res.json())
+      .then(setService)
+    apiFetch(`/services/${id}/preview_data`)
+      .then((res) => res.json())
+      .then((data: { pages: RenderedPage[] }) => setPages(data.pages))
   }, [id])
-
-  async function fetchService(serviceId: string) {
-    const res = await apiFetch(`/services/${serviceId}`)
-    setService(await res.json())
-  }
-
-  async function fetchPreview(serviceId: string) {
-    const res = await apiFetch(`/services/${serviceId}/preview_data`)
-    const data = await res.json()
-    setPages(data.pages)
-  }
 
   if (!service) return <p className="text-muted-foreground">Loading...</p>
 

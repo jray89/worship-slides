@@ -1,4 +1,3 @@
-import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import AppLayout from './components/AppLayout';
@@ -8,26 +7,9 @@ import ServicePreviewPage from './pages/ServicePreviewPage';
 import LoginPage from './pages/LoginPage';
 import PrintSlidesView from './components/PrintSlidesView';
 import PrintTitleCardView from './components/PrintTitleCardView';
-import { AuthProvider, useAuth } from './hooks/useAuth';
+import { AuthProvider } from './components/AuthProvider';
+import { ProtectedRoute, GuestRoute } from './components/RouteGuards';
 import './index.css';
-
-function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
-  if (loading) {
-    return <div className="flex h-screen items-center justify-center">Loading...</div>;
-  }
-  if (!user) return <Navigate to="/login" replace />;
-  return <>{children}</>;
-}
-
-function GuestRoute({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
-  if (loading) {
-    return <div className="flex h-screen items-center justify-center">Loading...</div>;
-  }
-  if (user) return <Navigate to="/services" replace />;
-  return <>{children}</>;
-}
 
 const container = document.getElementById('app');
 if (container) {

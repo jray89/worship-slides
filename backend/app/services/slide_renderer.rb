@@ -64,7 +64,7 @@ class SlideRenderer
 
   def split_stanza(stanza)
     lines = stanza["lines"] || []
-    return [stanza] if lines.length < MAX_PSALM_LINES_PER_SLIDE * 2
+    return [ stanza ] if lines.length < MAX_PSALM_LINES_PER_SLIDE * 2
 
     verse_numbers = stanza["verse_numbers"].is_a?(Hash) ? stanza["verse_numbers"] : {}
 

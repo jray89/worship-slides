@@ -2,7 +2,8 @@ require "net/http"
 require "json"
 
 # Fetches KJV text from the Free Use Bible API (https://bible.helloao.org).
-# Returns the same hash shape as ScriptureScraper#fetch.
+# Returns a hash with book, chapter, verse_spec, verses, paragraphs,
+# full_text and display_reference.
 class ScriptureApiClient
   include ScriptureReference
 

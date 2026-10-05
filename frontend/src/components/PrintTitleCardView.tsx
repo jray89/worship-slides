@@ -1,19 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import TitleCard from './slides/TitleCard';
+import type { PrintData } from '@/lib/types';
+
+type TitleCardData = Pick<PrintData, 'sermon_title' | 'sermon_reference'>;
 
 export default function PrintTitleCardView() {
   const { id } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
-  const [service, setService] = useState<any>(null);
+  // During PNG export the backend embeds the title data, so no fetch is needed.
+  const [service, setService] = useState<TitleCardData | null>(
+    () => window.__PRINT_DATA__ ?? null,
+  );
 
   useEffect(() => {
-    const embedded = (window as any).__PRINT_DATA__;
-    if (embedded) {
-      setService(embedded);
-      return;
-    }
+    if (window.__PRINT_DATA__) return;
     const headers: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {};
     fetch(`/api/services/${id}`, { headers })
       .then((r) => r.json())
@@ -29,8 +31,8 @@ export default function PrintTitleCardView() {
       style={{ background: 'transparent' }}
     >
       <TitleCard
-        sermonTitle={service.sermon_title}
-        sermonReference={service.sermon_reference}
+        sermonTitle={service.sermon_title ?? ''}
+        sermonReference={service.sermon_reference ?? ''}
       />
     </div>
   );
