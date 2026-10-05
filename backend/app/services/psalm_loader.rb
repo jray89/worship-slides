@@ -39,7 +39,7 @@ class PsalmLoader
     path = DATA_DIR.join("#{format('%03d', n)}#{suffix}.yml")
     raise PsalmNotFound, "Missing #{path}" unless path.exist?
 
-    data = YAML.safe_load_file(path, permitted_classes: [Integer], aliases: false)
+    data = YAML.safe_load_file(path, permitted_classes: [ Integer ], aliases: false)
     Array(data["stanzas"]).map do |stanza|
       {
         "lines" => stanza["lines"],
