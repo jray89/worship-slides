@@ -16,7 +16,7 @@ class ScriptureApiClientTest < ActiveSupport::TestCase
 
   teardown { ScriptureApiClient.reset_cache! }
 
-  test "returns the same keys as ScriptureScraper and echoes the reference" do
+  test "returns the expected keys and echoes the reference" do
     data = @client.fetch("John 3:16-18")
 
     assert_equal %w[book chapter verse_spec verses paragraphs full_text display_reference].sort, data.keys.sort
