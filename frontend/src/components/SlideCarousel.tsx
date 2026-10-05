@@ -7,11 +7,7 @@ import ClosingSlide from './slides/ClosingSlide';
 import PrivatePrayerSlide from './slides/PrivatePrayerSlide';
 import BlankSlide from './slides/BlankSlide';
 import { Button } from '@/components/ui/button';
-
-interface RenderedPage {
-  slide_type: string;
-  content: any;
-}
+import type { RenderedPage } from '@/lib/types';
 
 export default function SlideCarousel({ pages }: { pages: RenderedPage[] }) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -72,7 +68,7 @@ export default function SlideCarousel({ pages }: { pages: RenderedPage[] }) {
           />
         );
       default:
-        return <div>Unknown: {p.slide_type}</div>;
+        return <div>Unknown: {(p as { slide_type: string }).slide_type}</div>;
     }
   }
 

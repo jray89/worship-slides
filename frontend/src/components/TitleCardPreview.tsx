@@ -1,7 +1,8 @@
 import React, { useRef, useState, useEffect } from 'react';
 import TitleCard from './slides/TitleCard';
+import type { Service } from '@/lib/types';
 
-export default function TitleCardPreview({ service }: { service: { sermon_title: string; sermon_reference: string } }) {
+export default function TitleCardPreview({ service }: { service: Pick<Service, 'sermon_title' | 'sermon_reference'> }) {
   const [scale, setScale] = useState(1);
   const containerRef = useRef<HTMLDivElement>(null);
   const DESIGN_WIDTH = 1920;
@@ -46,7 +47,7 @@ export default function TitleCardPreview({ service }: { service: { sermon_title:
               left: 0,
             }}
           >
-            <TitleCard sermonTitle={service.sermon_title} sermonReference={service.sermon_reference} />
+            <TitleCard sermonTitle={service.sermon_title} sermonReference={service.sermon_reference ?? ''} />
           </div>
         </div>
       </div>

@@ -13,12 +13,22 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { apiFetch } from '@/lib/api';
+import type { Service, Slide } from '@/lib/types';
+
+interface SlidePayload {
+  slide_type: string;
+  psalm_number?: number;
+  verse_start?: number;
+  verse_end?: number;
+  psalm_version?: string;
+  scripture_reference?: string;
+}
 
 interface SlideEditorProps {
-  service: any;
-  slides: any[];
+  service: Service;
+  slides: Slide[];
   onSlidesChanged: () => void;
-  onServiceUpdated: (service: any) => void;
+  onServiceUpdated: (service: Service) => void;
 }
 
 export default function SlideEditor({
@@ -48,7 +58,7 @@ export default function SlideEditor({
   async function addSlide() {
     setLoading(true);
     try {
-      const body: any = { slide: { slide_type: slideType } };
+      const body: { slide: SlidePayload } = { slide: { slide_type: slideType } };
       if (slideType === 'psalm') {
         body.slide.psalm_number = parseInt(psalmNumber);
         body.slide.verse_start = parseInt(verseStart);
@@ -152,7 +162,7 @@ export default function SlideEditor({
     }
   }
 
-  function slideDescription(slide: any): string {
+  function slideDescription(slide: Slide): string {
     switch (slide.slide_type) {
       case 'welcome':
         return 'Welcome';
@@ -178,7 +188,7 @@ export default function SlideEditor({
     }
   }
 
-  function slidePageCount(slide: any): number {
+  function slidePageCount(slide: Slide): number {
     if (!slide.content_data) return 1;
     if (slide.slide_type === 'psalm')
       return slide.content_data.stanzas?.length || 0;

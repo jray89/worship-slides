@@ -5,9 +5,10 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { apiFetch } from '@/lib/api';
 import { Minus, Plus } from 'lucide-react';
+import type { Service } from '@/lib/types';
 
 interface ServiceFormProps {
-  onCreated: (service: any) => void;
+  onCreated: (service: Service) => void;
 }
 
 export default function ServiceForm({ onCreated }: ServiceFormProps) {
