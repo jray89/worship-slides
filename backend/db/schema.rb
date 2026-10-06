@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_05_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_05_130000) do
   create_table "services", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "label"
@@ -18,6 +18,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_05_120000) do
     t.string "sermon_title"
     t.date "service_date"
     t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id"], name: "index_services_on_user_id"
   end
 
   create_table "slides", force: :cascade do |t|
@@ -56,5 +58,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_05_120000) do
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
+  add_foreign_key "services", "users"
   add_foreign_key "slides", "services"
 end

@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   root "fallback#index"
 
   namespace :api do
+    post "signup", to: "auth#signup"
     post "login", to: "auth#login"
     get "me", to: "auth#me"
 

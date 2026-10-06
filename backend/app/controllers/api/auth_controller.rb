@@ -1,6 +1,17 @@
 module Api
   class AuthController < BaseController
-    skip_before_action :authenticate_user!, only: [ :login ]
+    skip_before_action :authenticate_user!, only: [ :signup, :login ]
+
+    def signup
+      user = User.new(signup_params)
+
+      if user.save
+        token = JwtService.encode({ user_id: user.id })
+        render json: { token: token, user: user_json(user) }, status: :created
+      else
+        render json: { errors: user.errors.full_messages }, status: :unprocessable_entity
+      end
+    end
 
     def login
       user = User.find_by(email: User.normalize_value_for(:email, params[:email].to_s))
@@ -18,6 +29,10 @@ module Api
     end
 
     private
+
+    def signup_params
+      params.permit(:first_name, :last_name, :email, :password, :password_confirmation)
+    end
 
     def user_json(user)
       {

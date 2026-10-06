@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, type ReactNode } from 'react'
-import { auth, getToken, setToken, clearToken, type User } from '@/lib/api'
+import { auth, getToken, setToken, clearToken, type SignupData, type User } from '@/lib/api'
 import { AuthContext } from '@/hooks/auth-context'
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -22,13 +22,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(data.user)
   }, [])
 
+  const signup = useCallback(async (signupData: SignupData) => {
+    const data = await auth.signup(signupData)
+    setToken(data.token)
+    setUser(data.user)
+  }, [])
+
   const logout = useCallback(() => {
     clearToken()
     setUser(null)
   }, [])
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, signup, logout }}>
       {children}
     </AuthContext.Provider>
   )

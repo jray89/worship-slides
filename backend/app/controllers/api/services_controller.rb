@@ -1,7 +1,7 @@
 module Api
   class ServicesController < BaseController
     def index
-      render json: Service.order(service_date: :desc)
+      render json: current_user.services.order(service_date: :desc)
     end
 
     def show
@@ -9,7 +9,7 @@ module Api
     end
 
     def create
-      svc = Service.new(service_params)
+      svc = current_user.services.build(service_params)
       if svc.save
         render json: svc, status: :created
       else
@@ -130,7 +130,7 @@ module Api
     end
 
     def service
-      @service ||= Service.find(params[:id])
+      @service ||= current_user.services.find(params[:id])
     end
 
     def service_params

@@ -2,7 +2,7 @@ require "test_helper"
 
 class ServicesApiTest < ActionDispatch::IntegrationTest
   setup do
-    @service = Service.create!(service_date: "2026-10-04", label: "AM",
+    @service = users(:jay).services.create!(service_date: "2026-10-04", label: "AM",
                                sermon_title: "The Good Shepherd", sermon_reference: "John 10:1-18")
   end
 
@@ -47,7 +47,7 @@ class ServicesApiTest < ActionDispatch::IntegrationTest
   end
 
   test "lists services newest first" do
-    older = Service.create!(service_date: "2020-01-05")
+    older = users(:jay).services.create!(service_date: "2020-01-05")
 
     get "/api/services", headers: auth_headers
 
@@ -75,6 +75,47 @@ class ServicesApiTest < ActionDispatch::IntegrationTest
     assert_equal "psalm", pages.first["slide_type"]
     assert_equal "welcome", pages.last["slide_type"]
     assert pages.first.dig("content", "stanza", "lines").any?
+  end
+
+  test "lists only the current user's services" do
+    theirs = users(:other).services.create!(service_date: "2026-10-04")
+
+    get "/api/services", headers: auth_headers
+
+    ids = response.parsed_body.map { |s| s["id"] }
+    assert_includes ids, @service.id
+    assert_not_includes ids, theirs.id
+  end
+
+  test "new services belong to the current user" do
+    post "/api/services", headers: auth_headers(users(:other)), as: :json,
+      params: { service: { service_date: "2026-10-11" } }
+
+    assert_equal users(:other).id, Service.find(response.parsed_body["id"]).user_id
+  end
+
+  test "cannot read or change another user's service or its slides" do
+    other = auth_headers(users(:other))
+
+    get "/api/services/#{@service.id}", headers: other
+    assert_response :not_found
+
+    patch "/api/services/#{@service.id}", headers: other, as: :json,
+      params: { service: { sermon_title: "Hijacked" } }
+    assert_response :not_found
+
+    delete "/api/services/#{@service.id}", headers: other
+    assert_response :not_found
+
+    get "/api/services/#{@service.id}/slides", headers: other
+    assert_response :not_found
+
+    post "/api/services/#{@service.id}/slides", headers: other, as: :json,
+      params: { slide: { slide_type: "welcome" } }
+    assert_response :not_found
+
+    assert_equal "The Good Shepherd", @service.reload.sermon_title
+    assert_empty @service.slides
   end
 
   test "rejects a psalm slide without a psalm number" do
