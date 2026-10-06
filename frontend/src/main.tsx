@@ -5,6 +5,7 @@ import ServiceListPage from './pages/ServiceListPage';
 import ServiceEditPage from './pages/ServiceEditPage';
 import ServicePreviewPage from './pages/ServicePreviewPage';
 import LoginPage from './pages/LoginPage';
+import SignupPage from './pages/SignupPage';
 import PrintSlidesView from './components/PrintSlidesView';
 import PrintTitleCardView from './components/PrintTitleCardView';
 import { AuthProvider } from './components/AuthProvider';
@@ -24,6 +25,14 @@ if (container) {
             element={
               <GuestRoute>
                 <LoginPage />
+              </GuestRoute>
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              <GuestRoute>
+                <SignupPage />
               </GuestRoute>
             }
           />

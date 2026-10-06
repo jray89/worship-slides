@@ -1,5 +1,8 @@
 module Api
   class SlidesController < BaseController
+    # Load (and authorize) the service up front so a 404 isn't swallowed by create's rescue.
+    before_action :service
+
     def index
       render json: service.slides.order(:position)
     end
@@ -53,7 +56,7 @@ module Api
     private
 
     def service
-      @service ||= Service.find(params[:service_id])
+      @service ||= current_user.services.find(params[:service_id])
     end
 
     def slide_params

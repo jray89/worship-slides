@@ -31,7 +31,7 @@ export async function apiFetch(path: string, options: RequestInit = {}): Promise
 
   if (res.status === 401) {
     clearToken()
-    if (window.location.pathname !== '/login') {
+    if (!['/login', '/signup'].includes(window.location.pathname)) {
       window.location.href = '/login'
     }
     throw new Error('Unauthorized')
@@ -56,7 +56,20 @@ export async function apiJson<T>(path: string, options: RequestInit = {}): Promi
   return res.json()
 }
 
+export interface SignupData {
+  first_name: string
+  last_name: string
+  email: string
+  password: string
+  password_confirmation: string
+}
+
 export const auth = {
+  signup: (data: SignupData) =>
+    apiJson<{ token: string; user: User }>('/signup', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
   login: (email: string, password: string) =>
     apiJson<{ token: string; user: User }>('/login', {
       method: 'POST',

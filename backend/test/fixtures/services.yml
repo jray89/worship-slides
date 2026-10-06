@@ -1,12 +1,14 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
+  user: jay
   service_date: 2026-05-02
   label: MyString
   sermon_title: MyString
   sermon_reference: MyString
 
 two:
+  user: jay
   service_date: 2026-05-02
   label: MyString
   sermon_title: MyString

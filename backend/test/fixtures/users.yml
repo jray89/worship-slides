@@ -3,3 +3,9 @@ jay:
   last_name: Example
   email: jay@example.com
   password_digest: <%= BCrypt::Password.create("correct-horse", cost: BCrypt::Engine::MIN_COST) %>
+
+other:
+  first_name: Other
+  last_name: Person
+  email: other@example.com
+  password_digest: <%= BCrypt::Password.create("correct-horse", cost: BCrypt::Engine::MIN_COST) %>
