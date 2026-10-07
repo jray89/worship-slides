@@ -82,7 +82,7 @@ Rebuild and re-symlink after frontend changes if you need to test exports locall
 ```bash
 # Backend
 cd backend
-bin/rails test     # model, service and request tests
+bin/rails test     # model, service and request tests; writes coverage/index.html
 bin/rubocop
 bin/brakeman
 
@@ -90,10 +90,11 @@ bin/brakeman
 cd frontend
 pnpm lint
 pnpm test          # Vitest
+pnpm test:coverage # Vitest with coverage; writes coverage/index.html
 pnpm build         # includes tsc
 ```
 
-GitHub Actions runs all of these on every pull request ([.github/workflows/ci.yml](.github/workflows/ci.yml)). Request tests stub Grover, so they don't need Chrome.
+GitHub Actions runs all of these on every pull request ([.github/workflows/ci.yml](.github/workflows/ci.yml)). Request tests stub Grover, so they don't need Chrome. CI fails if line coverage drops below 80% on either side.
 
 ## Project Structure
 

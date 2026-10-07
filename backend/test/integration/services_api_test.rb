@@ -154,6 +154,48 @@ class ServicesApiTest < ActionDispatch::IntegrationTest
     assert_not_includes captured_html, "</script><script>alert"
   end
 
+  test "shows a service and rejects an update that clears its date" do
+    get "/api/services/#{@service.id}", headers: auth_headers
+    assert_response :success
+    assert_equal "The Good Shepherd", response.parsed_body["sermon_title"]
+
+    patch "/api/services/#{@service.id}", headers: auth_headers, as: :json,
+      params: { service: { service_date: "" } }
+    assert_response :unprocessable_entity
+    assert_includes response.parsed_body["errors"], "Service date can't be blank"
+  end
+
+  test "slides export renders preview pages into a PDF" do
+    @service.slides.create!(slide_type: "welcome")
+    captured = nil
+    fake = Object.new
+    fake.define_singleton_method(:to_pdf) { "%PDF-fake" }
+
+    with_grover_stub(->(html, **opts) { captured = [ html, opts ]; fake }) do
+      get "/api/services/#{@service.id}/export_pdf", headers: auth_headers
+    end
+
+    assert_response :success
+    assert_equal "application/pdf", response.media_type
+    assert_equal "%PDF-fake", response.body
+    assert_match "2026-10-04-slides-am.pdf", response.headers["Content-Disposition"]
+    html, opts = captured
+    assert_includes html, %(window.__PRINT_DATA__ = {"pages":[{"slide_type":"welcome")
+    assert_equal({ width: 1920, height: 1080 }, opts[:viewport])
+  end
+
+  test "export filenames omit a blank label" do
+    @service.update!(label: "")
+    fake = Object.new
+    fake.define_singleton_method(:to_pdf) { "" }
+
+    with_grover_stub(->(*, **) { fake }) do
+      get "/api/services/#{@service.id}/export_pdf", headers: auth_headers
+    end
+
+    assert_match 'filename="2026-10-04-slides.pdf"', response.headers["Content-Disposition"]
+  end
+
   private
 
   # Grover drives headless Chrome; swap in a fake so exports can be tested without it.
