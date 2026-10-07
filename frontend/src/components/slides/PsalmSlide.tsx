@@ -1,11 +1,6 @@
 import SlideBase, { SlideLogoCorner } from './SlideBase';
 import { SlideHeader } from '../ui/SlideHeader';
-
-interface Stanza {
-  lines: string[];
-  // verse_numbers is a map: line_index (as string key) => verse_number
-  verse_numbers: Record<string, number>;
-}
+import type { Stanza } from '@/lib/types';
 
 interface PsalmSlideProps {
   reference: string; // e.g. "Psalm 71:15-19"
