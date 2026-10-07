@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
+import { useFitScale } from '@/hooks/useFitScale';
 import WelcomeSlide from './slides/WelcomeSlide';
 import PsalmSlide from './slides/PsalmSlide';
 import ScriptureSlide from './slides/ScriptureSlide';
@@ -11,25 +12,12 @@ import type { RenderedPage } from '@/lib/types';
 
 export default function SlideCarousel({ pages }: { pages: RenderedPage[] }) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [scale, setScale] = useState(1);
-  const containerRef = useRef<HTMLDivElement>(null);
 
   // Design width for slides (adjust as needed)
   const DESIGN_WIDTH = 1920;
   const DESIGN_HEIGHT = 1080; // 16:9
 
-  useEffect(() => {
-    function handleResize() {
-      if (containerRef.current) {
-        const width = containerRef.current.offsetWidth;
-        setScale(width / DESIGN_WIDTH);
-      }
-    }
-    // Use requestAnimationFrame to ensure layout is settled
-    requestAnimationFrame(handleResize);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  const [containerRef, scale] = useFitScale<HTMLDivElement>(DESIGN_WIDTH);
 
   if (pages.length === 0)
     return <p className='text-muted-foreground'>No slides to preview.</p>;
