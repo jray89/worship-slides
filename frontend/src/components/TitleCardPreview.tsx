@@ -1,24 +1,13 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React from 'react';
+import { useFitScale } from '@/hooks/useFitScale';
 import TitleCard from './slides/TitleCard';
 import type { Service } from '@/lib/types';
 
 export default function TitleCardPreview({ service }: { service: Pick<Service, 'sermon_title' | 'sermon_reference'> }) {
-  const [scale, setScale] = useState(1);
-  const containerRef = useRef<HTMLDivElement>(null);
   const DESIGN_WIDTH = 1920;
   const DESIGN_HEIGHT = 1080; // 16:9
 
-  useEffect(() => {
-    function handleResize() {
-      if (containerRef.current) {
-        const width = containerRef.current.offsetWidth;
-        setScale(width / DESIGN_WIDTH);
-      }
-    }
-    requestAnimationFrame(handleResize);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  const [containerRef, scale] = useFitScale<HTMLDivElement>(DESIGN_WIDTH);
 
   if (!service.sermon_title) {
     return <p className="text-muted-foreground mt-6">Set a sermon title to preview the title card.</p>;
