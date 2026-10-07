@@ -22,6 +22,16 @@ describe('slideDescription', () => {
   it('names fixed slides', () => {
     expect(slideDescription(slide({ slide_type: 'welcome' }))).toBe('Welcome');
     expect(slideDescription(slide({ slide_type: 'private_prayer' }))).toBe('Private Prayer');
+    expect(slideDescription(slide({ slide_type: 'closing' }))).toBe('Closing');
+    expect(slideDescription(slide({ slide_type: 'blank' }))).toBe('Blank');
+  });
+
+  it('shows the reference for a scripture reading', () => {
+    expect(slideDescription(slide({ slide_type: 'scripture', scripture_reference: 'Titus 2' }))).toBe('Titus 2');
+  });
+
+  it('falls back to the raw type for unknown slides', () => {
+    expect(slideDescription(slide({ slide_type: 'mystery' as Slide['slide_type'] }))).toBe('mystery');
   });
 
   it('includes the verse range for a psalm portion', () => {
@@ -52,5 +62,14 @@ describe('slidePageCount', () => {
   it('counts psalm stanzas and scripture pages', () => {
     expect(slidePageCount(slide({ slide_type: 'psalm', content_data: { stanzas: [{}, {}, {}] } }))).toBe(3);
     expect(slidePageCount(slide({ slide_type: 'scripture', content_data: { pages: [{}, {}] } }))).toBe(2);
+  });
+
+  it('is 0 when fetched content has no stanzas or pages', () => {
+    expect(slidePageCount(slide({ slide_type: 'psalm', content_data: {} }))).toBe(0);
+    expect(slidePageCount(slide({ slide_type: 'scripture', content_data: {} }))).toBe(0);
+  });
+
+  it('is 1 for a key verse', () => {
+    expect(slidePageCount(slide({ slide_type: 'key_verse', content_data: { pages: [{}, {}] } }))).toBe(1);
   });
 });

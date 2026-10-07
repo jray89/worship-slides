@@ -46,3 +46,7 @@ backend/public/vite-dev/
 
 # Vite env overrides
 *.local
+
+# Test coverage reports
+backend/coverage/
+frontend/coverage/
