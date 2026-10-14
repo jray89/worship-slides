@@ -8,9 +8,9 @@ WORKDIR /rails
 
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y \
-      curl libjemalloc2 libvips libpq5 \
+      curl libjemalloc2 libvips libpq5 tini \
       chromium \
-      fonts-liberation fonts-noto-color-emoji fonts-noto-cjk \
+      fonts-liberation fonts-noto-color-emoji \
       libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libxkbcommon0 \
       libxcomposite1 libxdamage1 libxfixes3 libxrandr2 libgbm1 libpango-1.0-0 \
       libcairo2 libasound2 libxshmfence1 && \
@@ -71,7 +71,9 @@ USER 1000:1000
 COPY --chown=rails:rails --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
 COPY --chown=rails:rails --from=build /rails /rails
 
-ENTRYPOINT ["/rails/bin/docker-entrypoint"]
+# tini runs as PID 1 so orphaned Chromium helpers (e.g. crashpad) get reaped
+# instead of piling up as zombies under Puma.
+ENTRYPOINT ["/usr/bin/tini", "--", "/rails/bin/docker-entrypoint"]
 
 EXPOSE 8080
 CMD ["bundle", "exec", "puma", "-b", "tcp://0.0.0.0:8080", "-e", "production"]
