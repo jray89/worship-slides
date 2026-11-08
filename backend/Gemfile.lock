@@ -128,7 +128,7 @@ GEM
       raabro (~> 1.4)
     globalid (1.4.0)
       activesupport (>= 6.1)
-    grover (1.2.10)
+    grover (2.0.1)
       nokogiri (~> 1)
     hashdiff (1.2.1)
     i18n (1.15.2)
